@@ -48,13 +48,14 @@ function PartsFinderContent() {
   const searchParams = useSearchParams();
 
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformId>("FDU");
-  const [serialNumber, setSerialNumber] = useState("");
+  const [serialNumber, setSerialNumber] = useState("FDU-2021-4481");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<
     ComponentCategory | "ALL"
   >("ALL");
   const [selectedPartIds, setSelectedPartIds] = useState<string[]>([
     "part-xsr-rotor-shaft",
+    "part-diamant-baffle",
   ]);
   const [uploadedPhotoName, setUploadedPhotoName] = useState("");
 

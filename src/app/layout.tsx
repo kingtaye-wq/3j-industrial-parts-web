@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   },
   description:
     "Precision spare parts, field service, and consulting for aluminum melt-treatment (FDU, MTS 1500, SMARTT, ThermaTest NGIII 5000) across the U.S., plus commercial equipment repair & loaner machines in Cuyahoga County, Ohio Only.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({

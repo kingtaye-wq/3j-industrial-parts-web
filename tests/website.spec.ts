@@ -4,7 +4,10 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
   test("1. Home page (/) renders official logo, melt-treatment SVG animation, verbatim proof quote, divisions, and quote form", async ({
     page,
   }) => {
-    await page.goto("/");
+    const response = await page.goto("/");
+    expect(response?.status()).toBe(200);
+    const robotsHeader = response?.headers()["x-robots-tag"] || "";
+    expect(robotsHeader.toLowerCase()).toContain("noindex");
 
     // Official Logo in Header & Footer
     const logos = page.locator('img[src="/assets/3j-logo.png"]');
