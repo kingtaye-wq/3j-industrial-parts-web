@@ -25,8 +25,8 @@ Production Next.js (App Router) + TypeScript + Tailwind CSS rebuild and enhancem
 - **Quote Turnaround SLA:** `Estimate within 24 hours`
 - **Verbatim Proof Line:** *"6+ years of aluminum melt-treatment expertise — formerly the single point of contact for SMARTT, MTS 1500, and ThermaTest NGIII 5000 support across the U.S."*
 - **Division 01 — Industrial Foundry Support (Nationwide U.S.):** Serial-verified spare parts, field service, equipment health checks, and process consulting for **FDU**, **MTS 1500**, **SMARTT**, and **ThermaTest NGIII 5000** (all Foseco / Vesuvius platforms).
-- **Division 02 — Commercial Equipment Repair & Loaner Fleet (Cuyahoga County, Ohio Only):** Frozen beverage / slushie machines, commercial ice machines, reach-in coolers/freezers, and glycol chillers with drop-off loaner machines exclusively within **Cuyahoga County, Ohio**.
-- **The Junior Tech Program:** Vocational-style training program led by Jason Allen staffing Division 02 in Cuyahoga County and recruiting top graduates toward Division 01 nationwide foundry systems.
+- **Division 02 — 3JI-Repair Commercial Equipment Service & Loaner Program (Cuyahoga County Launch Area):** Presented to customers as **3JI-Repair** (a named service of 3J Industrial Parts LLC — not a separate company or website). Services refrigerators, coolers, freezers, ice machines, HVAC, beverage machines, frozen beverage/slushie machines, walk-in coolers & freezers, reach-in & undercounter refrigeration, display merchandiser cases, ice dispensers & bins, soda fountain & carbonation systems, draft beer systems & glycol chillers, bottle coolers & kegerators, and juice dispensers & mixers in the **Cuyahoga County, Ohio launch area**.
+- **Join 3JI-Repair Technician Pathway:** Vocational-style training pathway led by Jason Allen where 3JI-Repair techs train on commercial equipment in the Cuyahoga County launch area, graduate to claiming field jobs, and top graduates are recruited toward Division 01 nationwide foundry systems.
 
 ## Pages & Routes
 
@@ -38,7 +38,7 @@ Production Next.js (App Router) + TypeScript + Tailwind CSS rebuild and enhancem
 3. **`/food-service` (`Food Service & Commercial Equipment — Cuyahoga County, OH`)**:
    - Explicit `CUYAHOGA COUNTY, OHIO — COMMERCIAL SERVICE` badge, 3-step Loaner Swap workflow, Interactive Downtime Cost Calculator (`60 drinks/day × ~$2.72/drink ≈ $98/day` lost gross profit), 4 Equipment Categories, Transparent Locked Pricing & Care Plan cards, and Cuyahoga County City/ZIP validated booking intake form.
 4. **`/about` (`About 3J Industrial Parts`)**:
-   - Jason Allen founder bio, verbatim proof quote, 4 core differentiators, and **The Junior Tech Program** vocational pathway section + interactive interest/partnership form.
+   - Jason Allen founder bio, verbatim proof quote, 4 core differentiators, and **Join 3JI-Repair** vocational pathway section + interactive interest form.
 
 ## Development & Verification
 

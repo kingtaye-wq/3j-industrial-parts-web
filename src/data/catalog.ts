@@ -16,8 +16,27 @@ export const BRAND = {
   logoPath: "/assets/3j-logo.png",
   division01Label: "Division 01 — Industrial Foundry Support · Nationwide U.S.",
   division02Label:
-    "Division 02 — Commercial Equipment Repair & Loaner Program · Cuyahoga County, Ohio Only",
+    "Division 02 — 3JI-Repair Commercial Equipment Service & Loaner Program · Cuyahoga County Launch Area",
+  serviceNameDiv02: "3JI-Repair",
 } as const;
+
+export const REPAIR_EQUIPMENT_SCOPE = [
+  "Refrigerators",
+  "Coolers",
+  "Freezers",
+  "Ice Machines",
+  "HVAC",
+  "Beverage Machines",
+  "Frozen Beverage / Slushie Machines",
+  "Walk-In Coolers & Freezers",
+  "Reach-In & Undercounter Refrigeration",
+  "Display Merchandiser Cases",
+  "Ice Dispensers & Bins",
+  "Soda Fountain & Carbonation Systems",
+  "Draft Beer Systems & Glycol Chillers",
+  "Bottle Coolers & Kegerators",
+  "Juice Dispensers & Mixers",
+] as const;
 
 export type PlatformId =
   | "FDU"
@@ -406,7 +425,7 @@ export const OUT_OF_COUNTY_EXAMPLES = new Set([
 ]);
 
 export const CUYAHOGA_VALIDATION_ALERT =
-  "Division 02 Commercial Equipment Service & Loaner Fleet is currently available exclusively within Cuyahoga County, Ohio. For nationwide Division 01 Industrial Foundry support, please use the Parts Finder.";
+  "3JI-Repair (Division 02 Commercial Equipment Service & Loaner Fleet) is currently available exclusively within our Cuyahoga County, Ohio launch area. For nationwide Division 01 Industrial Foundry support, please use the Parts Finder.";
 
 export function validateCuyahogaLocation(locationInput: string): {
   valid: boolean;

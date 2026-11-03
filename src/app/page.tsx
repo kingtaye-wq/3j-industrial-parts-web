@@ -42,10 +42,10 @@ const SIX_CORE_SERVICES = [
   },
   {
     code: "SVC-06",
-    division: "Division 02 · Cuyahoga County, OH Only",
-    title: "Commercial Equipment & Loaner Program",
+    division: "Division 02 · 3JI-Repair · Cuyahoga County Launch Area",
+    title: "3JI-Repair — Commercial Equipment & Loaner Program",
     description:
-      "Frozen beverage/slushie machines, commercial ice machines, reach-in coolers, freezers, and glycol chillers in Cuyahoga County, Ohio Only. We drop off a sanitized loaner machine first so you keep selling while we repair yours on our bench.",
+      "3JI-Repair is 3J Industrial Parts' commercial repair service for refrigerators, coolers, freezers, ice machines, HVAC, beverage machines, and frozen beverage/slushie machines in the Cuyahoga County, Ohio launch area. We pair your breakdown with a qualified technician — and for beverage machines, we drop off a replacement machine so you keep selling while we repair yours on our bench.",
   },
 ];
 
@@ -77,9 +77,9 @@ export default function HomePage() {
                 </span>{" "}
                 aluminum melt-treatment platforms.{" "}
                 <strong className="text-white">
-                  Division 02 (Cuyahoga County, Ohio Only):
+                  Division 02 — 3JI-Repair (Cuyahoga County Service Area):
                 </strong>{" "}
-                Rapid commercial frozen-beverage, slushie, and refrigeration repair with loaner machines dropped off first.
+                Commercial equipment repair for refrigerators, coolers, freezers, ice machines, HVAC, and beverage/slushie machines with loaner machines dropped off first.
               </p>
 
               {/* Dual Hero CTAs */}
@@ -254,23 +254,26 @@ export default function HomePage() {
             <div className="space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="px-3 py-1 rounded bg-[#1A1A1A] text-[#5ADCC8] border border-[#5ADCC8]/50 font-mono font-extrabold text-xs uppercase tracking-wider">
-                  02 — COMMERCIAL EQUIPMENT REPAIR &amp; LOANER FLEET
+                  02 — 3JI-REPAIR · COMMERCIAL EQUIPMENT &amp; LOANERS
                 </span>
                 <span className="px-2.5 py-0.5 rounded bg-[#5ADCC8]/15 text-[#5ADCC8] font-mono font-bold text-[11px] uppercase">
-                  Cuyahoga County service only
+                  Cuyahoga County service area
                 </span>
               </div>
 
               <h3 className="text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-white">
-                Frozen Beverage, Slushie &amp; Bar Equipment Repair — Cuyahoga County, OH Only
+                3JI-Repair: Commercial Equipment Service &amp; Loaner Fleet — Cuyahoga County Launch Area
               </h3>
 
               <p className="text-sm text-[#CCCCCC] leading-relaxed">
-                Built for bars, restaurants, convenience stores, and venues in{" "}
-                <strong className="text-white">Cuyahoga County, Ohio</strong> where a down slushie or ice machine costs{" "}
-                <strong className="text-[#5ADCC8]">~$98/day</strong> in lost gross profit.{" "}
+                <strong className="text-white">3JI-Repair</strong> is 3J Industrial Parts&apos; commercial repair service in{" "}
+                <strong className="text-white">Cuyahoga County, Ohio</strong> — pairing commercial breakdowns with qualified technicians across{" "}
+                <strong className="text-[#5ADCC8]">
+                  refrigerators, coolers, freezers, ice machines, HVAC, and beverage machines
+                </strong>
+                . For frozen beverage &amp; slushie machines,{" "}
                 <strong className="text-white">
-                  We drop off a replacement machine so you keep selling
+                  we drop off a replacement machine so you keep selling
                 </strong>{" "}
                 while we repair yours on our bench.
               </p>
@@ -278,11 +281,15 @@ export default function HomePage() {
               <ul className="space-y-2 text-xs sm:text-sm text-[#CCCCCC]">
                 <li className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#5ADCC8]" />
-                  <span>Frozen Beverage &amp; Slushie Machines (Primary Focus)</span>
+                  <span>
+                    Refrigerators, Coolers, Freezers, Ice Machines, HVAC &amp; Beverage Machines
+                  </span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#5ADCC8]" />
-                  <span>Commercial Ice Machines, Coolers, Freezers &amp; Glycol Chillers</span>
+                  <span>
+                    Frozen Beverage / Slushie Loaner Machine Program (~$98/day downtime saved)
+                  </span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#5ADCC8]" />
@@ -298,7 +305,7 @@ export default function HomePage() {
                 href="/food-service"
                 className="w-full text-center px-5 py-3 rounded border border-[#5ADCC8] text-[#5ADCC8] hover:bg-[#5ADCC8] hover:text-[#000000] font-extrabold text-xs uppercase tracking-wider transition-colors"
               >
-                Explore Cuyahoga County Food Service &amp; Loaners →
+                Explore 3JI-Repair (Cuyahoga County Service Area) →
               </Link>
             </div>
           </div>
@@ -393,28 +400,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 1.5: CUYAHOGA COUNTY LOANER PROGRAM CALLOUT (DIVISION 02 TEASER BAND) */}
+      {/* SECTION 1.5: DIVISION 02 TEASER BAND — 3JI-REPAIR (CUYAHOGA COUNTY SERVICE AREA) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="rounded-xl bg-[#0A0A0A] border border-[#5ADCC8]/50 p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-8 space-y-4">
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-3 py-1 rounded bg-[#5ADCC8] text-[#000000] font-mono font-extrabold text-xs uppercase tracking-wider">
-                Cuyahoga County service only
+                Cuyahoga County service area
+              </span>
+              <span className="px-2.5 py-1 rounded bg-[#1A1A1A] border border-[#5ADCC8]/40 text-xs font-mono text-[#5ADCC8] font-bold uppercase">
+                3JI-Repair · A Service of 3J Industrial Parts
               </span>
               <span className="text-xs font-mono uppercase text-[#CCCCCC]">
-                Division 02 · Bars, Restaurants &amp; Convenience Stores
+                Cuyahoga County Launch Area Only
               </span>
             </div>
 
             <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-white">
-              Down Frozen Beverage Machine Costs ~$98/Day. We Drop Off a Loaner First.
+              3JI-Repair: Commercial Equipment Repair &amp; Loaner Machines — We Drop Off a Replacement Machine So You Keep Selling.
             </h2>
 
             <p className="text-sm sm:text-base text-[#CCCCCC] leading-relaxed">
-              At <strong className="text-white">60 drinks/day × ~$2.72/drink</strong>{" "}
-              (~60% gross margin), a broken slushie or frozen cocktail machine costs{" "}
+              <strong className="text-white">3JI-Repair</strong> (Division 02 of 3J Industrial Parts LLC) pairs commercial repair jobs with qualified technicians across{" "}
+              <strong className="text-white">
+                refrigerators, coolers, freezers, ice machines, HVAC, and beverage machines
+              </strong>{" "}
+              in our <strong className="text-[#5ADCC8]">Cuyahoga County, Ohio</strong> launch area. At{" "}
+              <strong className="text-white">60 drinks/day × ~$2.72/drink</strong>{" "}
+              (~60% gross margin), a down frozen beverage or slushie machine costs{" "}
               <strong className="text-[#5ADCC8]">~$98/day in lost gross profit</strong>{" "}
-              (~$686/week). With 3J&apos;s Cuyahoga County Loaner Program, we drop off a sanitized replacement machine so you keep pouring while we repair yours on our bench. Loaners are{" "}
+              — so we drop off a replacement machine first while we repair yours on our bench. Loaners are{" "}
               <strong className="text-white">FREE inside a Monthly Care Plan</strong>{" "}
               (<strong className="text-[#5ADCC8]">$149–$199/mo per location</strong> or{" "}
               <strong className="text-[#5ADCC8]">$79–$99/mo</strong> single-machine).
@@ -426,13 +441,13 @@ export default function HomePage() {
               href="/food-service"
               className="w-full text-center px-6 py-4 rounded bg-[#5ADCC8] hover:bg-[#4bcbb7] text-[#000000] font-extrabold text-xs uppercase tracking-wider transition-colors"
             >
-              Calculate Downtime &amp; Book Loaner →
+              Explore 3JI-Repair &amp; Book Service →
             </Link>
             <a
               href={BRAND.phoneHref}
               className="w-full text-center px-6 py-3.5 rounded border border-[#383838] hover:border-[#5ADCC8] text-white font-mono font-bold text-xs uppercase tracking-wider transition-colors"
             >
-              Cuyahoga Dispatch: {BRAND.phoneDisplay}
+              3JI-Repair Dispatch: {BRAND.phoneDisplay}
             </a>
           </div>
         </div>

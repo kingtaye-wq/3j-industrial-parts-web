@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { REPAIR_EQUIPMENT_SCOPE } from "../src/data/catalog";
 
 test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
-  test("1. Home page (/) renders official logo, melt-treatment SVG animation, verbatim proof quote, divisions, and quote form", async ({
+  test("1. Home page (/) renders official logo, melt-treatment SVG animation, verbatim proof quote, 3JI-Repair teaser band, and quote form", async ({
     page,
   }) => {
     const response = await page.goto("/");
@@ -38,15 +39,17 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
         .first()
     ).toBeVisible();
 
-    // Cuyahoga County service only badge & Downtime math (~$98/day)
+    // 3JI-Repair service name & Cuyahoga County service area badge & Downtime math (~$98/day)
+    await expect(page.getByText(/3JI-Repair/i).first()).toBeVisible();
     await expect(
-      page.getByText(/Cuyahoga County service only/i).first()
+      page.getByText(/Cuyahoga County service area/i).first()
     ).toBeVisible();
     await expect(page.getByText(/~\$98\/day/i).first()).toBeVisible();
 
-    // Guardrail: No "Pyrotek" affiliation anywhere on page
+    // Guardrail: No "Pyrotek" affiliation or retired "Junior Tech" anywhere on page
     const bodyText = await page.locator("body").innerText();
     expect(bodyText.toLowerCase()).not.toContain("pyrotek");
+    expect(bodyText.toLowerCase()).not.toContain("junior tech");
   });
 
   test("2. Parts Finder (/parts-finder) completes 3-step selector flow (platform -> serial -> catalog -> pre-filled quote submission)", async ({
@@ -85,25 +88,33 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
     await expect(confirmBanner).toContainText("estimate within 24 hours");
     await expect(confirmBanner).toContainText("MTS1500-2022-8841");
 
-    // Guardrail: No "Pyrotek" anywhere
+    // Guardrail: No "Pyrotek" or retired "Junior Tech" anywhere
     const bodyText = await page.locator("body").innerText();
     expect(bodyText.toLowerCase()).not.toContain("pyrotek");
+    expect(bodyText.toLowerCase()).not.toContain("junior tech");
   });
 
-  test("3. Food Service (/food-service) displays Cuyahoga County badges, locked pricing, interactive downtime calculator (~$98/day at 60 drinks), and validates Cuyahoga County addresses", async ({
+  test("3. Food Service (/food-service) presents 3JI-Repair, full 15-item equipment scope, locked pricing, interactive downtime calculator (~$98/day at 60 drinks), and validates Cuyahoga County addresses", async ({
     page,
   }) => {
     await page.goto("/food-service");
 
-    // Hero badge & H1
-    await expect(page.getByTestId("cuyahoga-hero-badge")).toHaveText(
-      "CUYAHOGA COUNTY, OHIO — COMMERCIAL SERVICE"
+    // Hero badge & 3JI-Repair H1
+    await expect(page.getByTestId("cuyahoga-hero-badge")).toContainText(
+      "CUYAHOGA COUNTY, OHIO — 3JI-REPAIR COMMERCIAL SERVICE"
     );
     await expect(
       page.getByRole("heading", {
-        name: /Slushie or Ice Machine Down\? Keep Pouring While We Fix Yours\./i,
+        name: /Commercial Equipment Down\? 3JI-Repair Pairs a Qualified Tech/i,
       })
     ).toBeVisible();
+
+    // Verify all 15 equipment types from Jason's list + adjacent machines are displayed
+    const scopeGrid = page.getByTestId("equipment-scope-grid");
+    await expect(scopeGrid).toBeVisible();
+    for (const eqItem of REPAIR_EQUIPMENT_SCOPE) {
+      await expect(scopeGrid).toContainText(eqItem);
+    }
 
     // Interactive Downtime Calculator: Default 60 drinks/day => ~$98/day, $294 (3-day), $686 (7-day)
     await expect(page.getByTestId("calc-daily-loss")).toHaveText("~$98/day");
@@ -135,7 +146,7 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
     const validationAlert = page.getByTestId("cuyahoga-validation-alert");
     await expect(validationAlert).toBeVisible();
     await expect(validationAlert).toContainText(
-      "Division 02 Commercial Equipment Service & Loaner Fleet is currently available exclusively within Cuyahoga County, Ohio. For nationwide Division 01 Industrial Foundry support, please use the Parts Finder."
+      "3JI-Repair (Division 02 Commercial Equipment Service & Loaner Fleet) is currently available exclusively within our Cuyahoga County, Ohio launch area. For nationwide Division 01 Industrial Foundry support, please use the Parts Finder."
     );
 
     // Valid Cuyahoga County city (Lakewood, OH) clears alert and submits cleanly
@@ -155,12 +166,13 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
 
     await expect(page.getByTestId("food-service-confirmation")).toBeVisible();
 
-    // Guardrail: No "Pyrotek" anywhere
+    // Guardrail: No "Pyrotek" or retired "Junior Tech" anywhere
     const bodyText = await page.locator("body").innerText();
     expect(bodyText.toLowerCase()).not.toContain("pyrotek");
+    expect(bodyText.toLowerCase()).not.toContain("junior tech");
   });
 
-  test("4. About (/about) renders Jason Allen bio, verbatim proof quote, Junior Tech Program section & interest form, and honors prefers-reduced-motion", async ({
+  test("4. About (/about) renders Jason Allen bio, verbatim proof quote, Join 3JI-Repair section & interest form, and honors prefers-reduced-motion", async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -171,9 +183,15 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
       "6+ years of aluminum melt-treatment expertise — formerly the single point of contact for SMARTT, MTS 1500, and ThermaTest NGIII 5000 support across the U.S."
     );
 
-    // Junior Tech Program Heading & Form
+    // Join 3JI-Repair Heading & Subheading
     await expect(
-      page.getByRole("heading", { name: "The Junior Tech Program", exact: true })
+      page.getByRole("heading", { name: "Join 3JI-Repair", exact: true })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "Interested in joining 3JI-Repair?",
+        exact: true,
+      })
     ).toBeVisible();
 
     await page.getByTestId("jtp-name-input").fill("Marcus Vance");
@@ -182,13 +200,18 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
     await page.getByTestId("jtp-city-input").fill("Parma, OH");
     await page
       .getByTestId("jtp-track-select")
-      .selectOption("Applicant / Student");
+      .selectOption("Applicant / Trainee Pathway");
     await page
       .getByTestId("jtp-note-input")
       .fill("Completed HVAC/R basics and electrical troubleshooting coursework.");
     await page.getByTestId("jtp-submit-btn").click();
 
     await expect(page.getByTestId("jtp-confirmation")).toBeVisible();
+
+    // Guardrail on /about: No "Pyrotek" or retired "Junior Tech" anywhere
+    const aboutBodyText = await page.locator("body").innerText();
+    expect(aboutBodyText.toLowerCase()).not.toContain("pyrotek");
+    expect(aboutBodyText.toLowerCase()).not.toContain("junior tech");
 
     // Verify prefers-reduced-motion disables animation on Home melt schematic
     await page.goto("/");
@@ -197,9 +220,5 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
       .first()
       .evaluate((el) => window.getComputedStyle(el).animationName);
     expect(bubbleAnimName).toBe("none");
-
-    // Guardrail: No "Pyrotek" anywhere
-    const bodyText = await page.locator("body").innerText();
-    expect(bodyText.toLowerCase()).not.toContain("pyrotek");
   });
 });

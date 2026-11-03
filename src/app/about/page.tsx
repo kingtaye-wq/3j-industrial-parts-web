@@ -37,15 +37,15 @@ export default function AboutPage() {
   const [email, setEmail] = useState("");
   const [city, setCity] = useState("Cleveland, OH");
   const [track, setTrack] = useState<
-    | "Applicant / Student"
+    | "Applicant / Trainee Pathway"
     | "Vocational School / Instructor"
-    | "Independent Tech (1099)"
-  >("Applicant / Student");
+    | "Experienced Commercial Tech"
+  >("Applicant / Trainee Pathway");
   const [backgroundNote, setBackgroundNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedRef, setSubmittedRef] = useState<string | null>(null);
 
-  async function handleJuniorTechSubmit(e: React.FormEvent) {
+  async function handleJoinRepairSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     try {
@@ -53,7 +53,7 @@ export default function AboutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          formType: "junior-tech-program-interest",
+          formType: "join-3ji-repair-interest",
           name,
           phone,
           email,
@@ -63,9 +63,9 @@ export default function AboutPage() {
         }),
       });
       const data = await res.json();
-      setSubmittedRef(data.referenceId || "3J-JTP-24H");
+      setSubmittedRef(data.referenceId || "3J-REP-24H");
     } catch {
-      setSubmittedRef("3J-JTP-24H");
+      setSubmittedRef("3J-REP-24H");
     } finally {
       setSubmitting(false);
     }
@@ -111,10 +111,9 @@ export default function AboutPage() {
                 <p>
                   At home in Northeast Ohio, 3J applies that same engineering discipline to{" "}
                   <strong className="text-white">
-                    Division 02 Commercial Equipment Repair &amp; Loaner Fleet (Cuyahoga County, Ohio Only)
-                  </strong>{" "}
-                  — keeping local bars, restaurants, and venues pouring with drop-off loaner machines while training the next generation of mechanical technicians through{" "}
-                  <strong className="text-[#5ADCC8]">The Junior Tech Program</strong>.
+                    Division 02 — 3JI-Repair (Cuyahoga County, Ohio Launch Area)
+                  </strong>
+                  , our commercial equipment repair and loaner machine service — pairing breakdowns across refrigerators, coolers, freezers, ice machines, HVAC, and beverage machines with qualified technicians while training the next generation of specialists toward Division 01 foundry work.
                 </p>
               </div>
             </div>
@@ -176,7 +175,7 @@ export default function AboutPage() {
                 </div>
                 <div>
                   <span className="text-[#999999] block uppercase">
-                    DIVISION 02 TERRITORY
+                    DIVISION 02 (3JI-REPAIR) LAUNCH AREA
                   </span>
                   <span className="text-[#5ADCC8] font-bold">
                     Cuyahoga County, Ohio Only
@@ -195,7 +194,7 @@ export default function AboutPage() {
                   href="/food-service"
                   className="w-full text-center px-4 py-3 rounded border border-[#383838] hover:border-[#5ADCC8] text-white font-mono text-xs uppercase tracking-wider transition-colors"
                 >
-                  Cuyahoga Food Service →
+                  3JI-Repair (Cuyahoga County) →
                 </Link>
               </div>
             </div>
@@ -234,9 +233,9 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* THE JUNIOR TECH PROGRAM SECTION + RECRUITING / PARTNERSHIP FORM */}
+      {/* JOIN 3JI-REPAIR RECRUITING & TRADE PATHWAY SECTION */}
       <section
-        id="junior-tech-program"
+        id="join-3ji-repair"
         className="bg-[#050505] border-b border-[#262626] py-16"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -244,66 +243,68 @@ export default function AboutPage() {
             {/* Program Narrative */}
             <div className="lg:col-span-6 space-y-5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#5ADCC8] text-[#000000] font-mono font-extrabold text-xs uppercase tracking-wider">
-                VOCATIONAL TRADE PATHWAY · CUYAHOGA COUNTY → NATIONWIDE FOUNDRY
+                VOCATIONAL TRADE PATHWAY · CUYAHOGA COUNTY LAUNCH AREA → DIVISION 01 FOUNDRY
               </div>
 
               <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
-                The Junior Tech Program
+                Join 3JI-Repair
               </h2>
 
               <p className="text-sm sm:text-base text-[#CCCCCC] leading-relaxed">
-                Division 02 is staffed through{" "}
-                <strong className="text-white">3J&apos;s Junior Tech Program</strong> — a structured, vocational-style training program led personally by{" "}
-                <strong className="text-white">{BRAND.founder}</strong>. Rather than an anonymous gig board, the Junior Tech Program is a hands-on trade pathway where mechanical trainees learn commercial diagnostics from the bench up.
+                <strong className="text-white">3JI-Repair</strong> is 3J Industrial Parts&apos; commercial equipment repair service in the{" "}
+                <strong className="text-white">Cuyahoga County, Ohio launch area</strong>.{" "}
+                Built as a structured, vocational-style trade pathway led personally by{" "}
+                <strong className="text-white">{BRAND.founder}</strong>,{" "}
+                <strong className="text-[#5ADCC8]">3JI-Repair</strong> trains technicians from the bench up on real commercial equipment and advances top performers toward nationwide industrial foundry systems.
               </p>
 
               <div className="space-y-3 pt-2">
                 <div className="p-4 rounded-lg bg-[#0A0A0A] border border-[#262626]">
                   <span className="text-xs font-mono text-[#5ADCC8] font-bold uppercase block">
-                    STAGE 01 · BENCH &amp; SUPERVISED FIELD TRAINING (CUYAHOGA COUNTY)
+                    STAGE 01 · TRAIN UNDER JASON IN THE CUYAHOGA COUNTY LAUNCH AREA
                   </span>
                   <p className="text-xs sm:text-sm text-[#CCCCCC] mt-1">
-                    Junior techs train under Jason on bar and restaurant equipment in Cuyahoga County — mastering frozen-beverage drive rebuilds, electrical schematics, Ohio food code OAC 3717-1-08.1 sanitation procedures, and supervised ride-alongs.
+                    3JI-Repair trainees build hands-on competencies under Jason on commercial refrigerators, coolers, freezers, ice machines, HVAC, and beverage/slushie machines — mastering electrical schematics, drive rebuilds, Ohio food code OAC 3717-1-08.1 sanitation procedures, and supervised field calls.
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg bg-[#0A0A0A] border border-[#262626]">
                   <span className="text-xs font-mono text-[#5ADCC8] font-bold uppercase block">
-                    STAGE 02 · GRADUATION TO FIELD CLAIMING (L1 → L2 → L3)
+                    STAGE 02 · GRADUATE TO CLAIMING FIELD JOBS (OPPORTUNITIES)
                   </span>
                   <p className="text-xs sm:text-sm text-[#CCCCCC] mt-1">
-                    Once Jason signs off on bench and field competencies, graduates earn qualification to claim Cuyahoga County field service and loaner-swap dispatches across progressive technical tiers (including EPA 608 refrigeration certification for L2/L3).
+                    Once Jason signs off on bench and field competencies, graduated 3JI-Repair technicians qualify to claim commercial repair opportunities and loaner-swap dispatches across progressive technical tiers (L1 → L2 → L3, with EPA 608 certification for sealed refrigeration systems).
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg bg-[#0A0A0A] border border-[#5ADCC8]/50">
                   <span className="text-xs font-mono text-[#5ADCC8] font-bold uppercase block">
-                    STAGE 03 · DIVISION 01 INDUSTRIAL FOUNDRY MENTORSHIP
+                    STAGE 03 · RECRUITMENT TOWARD DIVISION 01 FOUNDRY SYSTEMS
                   </span>
                   <p className="text-xs sm:text-sm text-[#CCCCCC] mt-1">
-                    The Junior Tech Program doubles as the recruiting pipeline for{" "}
-                    <strong className="text-white">Division 01 Foundry Support</strong>. Top-performing graduates are recruited into mentorship with Jason to work on the big stuff: nationwide{" "}
+                    The 3JI-Repair technician pipeline doubles as the recruiting pathway for{" "}
+                    <strong className="text-white">Division 01 Foundry Support</strong>. The best graduates are recruited toward the industrial melt-treatment work Jason does nationwide:{" "}
                     <strong className="text-white">
                       FDU, MTS 1500, SMARTT, and ThermaTest NGIII 5000
                     </strong>{" "}
-                    aluminum melt-treatment systems.
+                    systems.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Interactive Apply / Partner Interest Form */}
+            {/* Interactive Interested in Joining 3JI-Repair Form */}
             <div className="lg:col-span-6 rounded-xl bg-[#0A0A0A] border-2 border-[#5ADCC8] p-6 sm:p-8 space-y-5">
               <div>
                 <span className="text-xs font-mono uppercase tracking-widest text-[#5ADCC8] font-bold">
-                  INTERESTED IN THE PROGRAM?
+                  REAL TRADE PATHWAY · EARN-WHILE-YOU-LEARN MENTORSHIP
                 </span>
                 <h3 className="mt-1 text-xl sm:text-2xl font-extrabold uppercase text-white">
-                  Apply or Partner with the Junior Tech Program
+                  Interested in joining 3JI-Repair?
                 </h3>
                 <p className="mt-1 text-xs sm:text-sm text-[#CCCCCC]">
-                  Whether you are an aspiring technician, a trade/vocational school instructor, or an experienced independent tech, connect directly with{" "}
-                  {BRAND.founder} ({BRAND.email}).
+                  Submit your details below to connect directly with {BRAND.founder} (
+                  <span className="font-mono text-[#5ADCC8]">{BRAND.email}</span>) about the 3JI-Repair technician pathway in Cuyahoga County.
                 </p>
               </div>
 
@@ -314,13 +315,13 @@ export default function AboutPage() {
                   className="rounded-lg bg-[#051412] border border-[#5ADCC8] p-6 space-y-3"
                 >
                   <span className="inline-block px-3 py-1 rounded bg-[#5ADCC8] text-[#000000] font-mono font-extrabold text-xs uppercase">
-                    Junior Tech Program Inquiry Logged · Ref #{submittedRef}
+                    3JI-Repair Pathway Inquiry Logged · Ref #{submittedRef}
                   </span>
                   <h4 className="text-lg font-extrabold uppercase text-white">
                     Thank You, {name}. Your Interest Has Been Sent to {BRAND.founder}.
                   </h4>
                   <p className="text-xs sm:text-sm text-[#CCCCCC] leading-relaxed">
-                    Your inquiry under track{" "}
+                    Your 3JI-Repair inquiry under{" "}
                     <strong className="text-[#5ADCC8]">{track}</strong> has been routed to{" "}
                     <a
                       href={BRAND.emailHref}
@@ -328,7 +329,7 @@ export default function AboutPage() {
                     >
                       {BRAND.email}
                     </a>
-                    . Jason reviews all Junior Tech Program inquiries personally.
+                    . Jason reviews all 3JI-Repair technician inquiries personally.
                   </p>
                   <button
                     type="button"
@@ -339,7 +340,7 @@ export default function AboutPage() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleJuniorTechSubmit} className="space-y-4">
+                <form onSubmit={handleJoinRepairSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label
@@ -425,7 +426,7 @@ export default function AboutPage() {
                       htmlFor="jtp-track"
                       className="block text-xs font-mono uppercase text-[#5ADCC8] font-bold mb-1.5"
                     >
-                      Program Track *
+                      3JI-Repair Pathway Track *
                     </label>
                     <select
                       id="jtp-track"
@@ -434,21 +435,21 @@ export default function AboutPage() {
                       onChange={(e) =>
                         setTrack(
                           e.target.value as
-                            | "Applicant / Student"
+                            | "Applicant / Trainee Pathway"
                             | "Vocational School / Instructor"
-                            | "Independent Tech (1099)"
+                            | "Experienced Commercial Tech"
                         )
                       }
                       className="w-full px-3.5 py-2.5 rounded bg-[#000000] border border-[#5ADCC8]/60 text-white text-sm focus:outline-none focus:border-[#5ADCC8]"
                     >
-                      <option value="Applicant / Student">
-                        Applicant / Student (Vocational Cohort Trainee)
+                      <option value="Applicant / Trainee Pathway">
+                        Applicant / Trainee Pathway (Train Under Jason in Cuyahoga County)
                       </option>
                       <option value="Vocational School / Instructor">
-                        Vocational School / Instructor (Training Partnership)
+                        Vocational School / Instructor (Trade Program Partnership)
                       </option>
-                      <option value="Independent Tech (1099)">
-                        Independent Tech (1099) (Experienced Commercial / EPA 608 Tech)
+                      <option value="Experienced Commercial Tech">
+                        Experienced Commercial Tech (Refrigeration / HVAC / EPA 608)
                       </option>
                     </select>
                   </div>
@@ -458,7 +459,7 @@ export default function AboutPage() {
                       htmlFor="jtp-note"
                       className="block text-xs font-mono uppercase text-[#CCCCCC] mb-1.5"
                     >
-                      Brief Background / Mechanical Experience / Note *
+                      Any Mechanical, Electrical, or Trade Experience *
                     </label>
                     <textarea
                       id="jtp-note"
@@ -467,13 +468,13 @@ export default function AboutPage() {
                       required
                       value={backgroundNote}
                       onChange={(e) => setBackgroundNote(e.target.value)}
-                      placeholder="Share any hands-on mechanical, electrical, HVAC/R, or trade school background..."
+                      placeholder="Share any hands-on mechanical, electrical, refrigeration, HVAC, or trade school experience..."
                       className="w-full px-3.5 py-2.5 rounded bg-[#000000] border border-[#383838] text-white text-sm focus:outline-none focus:border-[#5ADCC8]"
                     />
                   </div>
 
                   <p className="text-[11px] text-[#999999] leading-relaxed">
-                    Note: Submission expresses interest in the Junior Tech Program cohort or technical partnership network and does not constitute an offer or guarantee of specific schedules or terms.
+                    Note: Submission expresses interest in the 3JI-Repair vocational training pathway and does not constitute an offer or guarantee of specific schedules or terms.
                   </p>
 
                   <button
@@ -484,7 +485,7 @@ export default function AboutPage() {
                   >
                     {submitting
                       ? "Sending Inquiry..."
-                      : "Apply / Partner with the Junior Tech Program →"}
+                      : "Submit 3JI-Repair Interest Form →"}
                   </button>
                 </form>
               )}
@@ -501,7 +502,7 @@ export default function AboutPage() {
               {BRAND.legalName} · {BRAND.tagline}
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold uppercase text-white">
-              Need Foundry Parts or Cuyahoga Commercial Service?
+              Need Foundry Parts or Cuyahoga 3JI-Repair Service?
             </h2>
             <p className="text-sm text-[#CCCCCC]">
               Every quote request receives a detailed{" "}

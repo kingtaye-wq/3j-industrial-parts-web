@@ -6,56 +6,63 @@ import {
   BRAND,
   CUYAHOGA_COUNTY_CITIES,
   CUYAHOGA_VALIDATION_ALERT,
+  REPAIR_EQUIPMENT_SCOPE,
   validateCuyahogaLocation,
 } from "@/data/catalog";
 
 const EQUIPMENT_CATEGORIES = [
   {
     step: "01",
-    title: "1. Frozen Beverage & Slushie Machines (Hero Wedge)",
-    badge: "Primary Loaner Fleet Focus",
+    title: "1. Beverage, Frozen Beverage & Slushie Machines (Loaner Fleet Hero)",
+    badge: "Loaner Dropped Off First",
     description:
-      "Bunn Ultra, Taylor, Frosty Factory, Elmeco, Spaceman, Granita, and frozen cocktail dispensers. Drive auger motors, torque sensors, evaporator barrels, seals, and refrigeration recharge — backed by our drop-off loaner machine program.",
+      "Beverage machines, frozen beverage/slushie machines (Bunn Ultra, Taylor, Frosty Factory, Elmeco, Spaceman, Granita), soda fountain & carbonation systems, and juice dispensers & mixers. For down beverage machines, a 3JI-Repair technician drops off a sanitized replacement loaner first so you keep selling.",
   },
   {
     step: "02",
-    title: "2. Commercial Ice Machines",
-    badge: "EPA 608 Certified",
+    title: "2. Refrigerators, Coolers & Freezers (Walk-In, Reach-In & Merchandisers)",
+    badge: "Commercial Cold Storage",
     description:
-      "Manitowoc, Hoshizaki, Scotsman, and Ice-O-Matic cubers, flakers, and undercounter ice makers. Water pumps, harvest valves, control boards, descaling, and bi-annual preventative sanitation.",
+      "Commercial refrigerators, coolers, freezers, walk-in coolers & freezers, reach-in & undercounter refrigeration, display merchandiser cases, and bottle coolers & kegerators (True, Beverage-Air, Turbo Air, Delfield). Compressors, evaporator coils, thermostats, relays, and door gaskets.",
   },
   {
     step: "03",
-    title: "3. Reach-In Coolers & Bar Refrigeration",
-    badge: "Bar & Kitchen Uptime",
+    title: "3. Commercial Ice Machines, Dispensers & Bins",
+    badge: "EPA 608 Certified",
     description:
-      "True, Beverage-Air, Turbo Air, and Delfield reach-in coolers, freezers, underbar back-bars, prep tables, and juice mixers. Compressors, fan motors, digital thermostats, and door gaskets.",
+      "Commercial ice machines, ice dispensers & bins (Manitowoc, Hoshizaki, Scotsman, Ice-O-Matic cubers, flakers, and nuggets). Water pumps, harvest valves, control boards, descaling, and bi-annual preventative sanitation.",
   },
   {
     step: "04",
-    title: "4. Draft Beer & Glycol Chillers",
-    badge: "Master Refrigeration",
+    title: "4. Commercial HVAC, Draft Beer Systems & Glycol Chillers",
+    badge: "Master Refrigeration & HVAC",
     description:
-      "Glycol power packs, long-draw draft chiller decks, circulation pumps, and temperature control loops keeping tap lines pouring at spec during peak bar hours.",
+      "Commercial kitchen/bar HVAC units, make-up air & rooftop package diagnostics, plus draft beer systems & glycol chillers keeping long-draw tap lines and dining rooms at spec during peak service hours.",
   },
 ];
 
 const LOANER_STEPS = [
   {
     number: "1",
-    title: "1. Dispatch & Drop-Off",
+    title: "1. Pair Qualified 3JI-Repair Tech",
     description:
-      "We claim your breakdown and drop off & install a sanitized replacement loaner machine at your Cuyahoga County venue first — so your staff keeps pouring and selling.",
+      "Submit your breakdown in Cuyahoga County and we pair a qualified 3JI-Repair technician to the job — reserving a replacement unit from our hub when a beverage loaner is needed.",
   },
   {
     number: "2",
-    title: "2. Bench Repair Done Right",
+    title: "2. Drop Off & Install Loaner First",
     description:
-      "We transport your downed machine to our repair bench (or fix minor faults on-site), run full diagnostics ($99 fee credited toward repair), and load-test under real freeze cycles.",
+      "For frozen beverage & slushie machines, our technician drops off and installs a sanitized replacement loaner machine at your venue first — so your staff keeps pouring and selling.",
   },
   {
     number: "3",
-    title: "3. Swap Back & Sanitize",
+    title: "3. Bench Repair Done Right",
+    description:
+      "We transport your downed machine to our repair bench (or repair refrigerators, coolers, freezers, ice machines & HVAC on-site), run full diagnostics ($99 fee credited toward repair), and load-test.",
+  },
+  {
+    number: "4",
+    title: "4. Return Machine & Sanitize Loaner",
     description:
       "We return your repaired unit, retrieve the loaner, and complete a mandatory Ohio food code OAC 3717-1-08.1 sanitation log before the loaner returns to active fleet duty.",
   },
@@ -69,7 +76,7 @@ export default function FoodServicePage() {
   // Benchmark math per brand spec:
   // 60 drinks/day × ~$2.72/drink (~60% margin) ≈ $98/day lost gross profit
   const grossPricePerDrink = 2.72;
-  const marginRate = 0.6; // 2.72 * 0.6 = 1.632 -> 60 * 1.6333 = $98/day
+  const marginRate = 0.6;
   const dailyLostProfit = Math.round(
     drinksPerDay * (grossPricePerDrink * marginRate)
   );
@@ -84,8 +91,8 @@ export default function FoodServicePage() {
   const [email, setEmail] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [cityOrZip, setCityOrZip] = useState("");
-  const [machineType, setMachineType] = useState(
-    "Frozen Beverage / Slushie Machine"
+  const [machineType, setMachineType] = useState<string>(
+    "Frozen Beverage / Slushie Machines"
   );
   const [needLoaner, setNeedLoaner] = useState("Yes — Drop Off Loaner Machine");
   const [planInterest, setPlanInterest] = useState(
@@ -132,7 +139,8 @@ export default function FoodServicePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          formType: "cuyahoga-food-service-booking",
+          formType: "3ji-repair-cuyahoga-booking",
+          service: "3JI-Repair",
           businessName,
           contactName,
           phone,
@@ -158,7 +166,7 @@ export default function FoodServicePage() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: `${BRAND.legalName} — Division 02 Commercial Equipment & Loaner Fleet`,
+    name: `${BRAND.legalName} — 3JI-Repair (Division 02 Commercial Equipment Service)`,
     telephone: BRAND.phoneDisplay,
     email: BRAND.email,
     areaServed: {
@@ -166,7 +174,7 @@ export default function FoodServicePage() {
       name: "Cuyahoga County, Ohio",
     },
     description:
-      "Commercial frozen beverage/slushie machine repair, ice machines, reach-in refrigeration, and loaner machine swap program exclusively serving Cuyahoga County, Ohio.",
+      "3JI-Repair is 3J Industrial Parts LLC's commercial equipment repair and loaner machine service in the Cuyahoga County, Ohio launch area — servicing refrigerators, coolers, freezers, ice machines, HVAC, beverage machines, and frozen beverage/slushie machines.",
   };
 
   return (
@@ -188,21 +196,30 @@ export default function FoodServicePage() {
                   data-testid="cuyahoga-hero-badge"
                   className="px-3.5 py-1.5 rounded bg-[#5ADCC8] text-[#000000] font-mono font-extrabold text-xs uppercase tracking-wider"
                 >
-                  CUYAHOGA COUNTY, OHIO — COMMERCIAL SERVICE
+                  CUYAHOGA COUNTY, OHIO — 3JI-REPAIR COMMERCIAL SERVICE
                 </span>
                 <span className="px-3 py-1.5 rounded bg-[#1A1A1A] border border-[#5ADCC8]/40 text-xs font-mono text-[#5ADCC8] uppercase font-bold">
-                  Cuyahoga County service only
+                  Cuyahoga County service area · Launch Area
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl lg:text-[50px] font-extrabold uppercase tracking-tight leading-[1.08] text-white">
-                Slushie or Ice Machine Down? Keep Pouring While We Fix Yours.
+              <p className="text-xs font-mono uppercase tracking-widest text-[#5ADCC8] font-bold">
+                3JI-REPAIR · A SERVICE OF 3J INDUSTRIAL PARTS LLC (DIVISION 02)
+              </p>
+
+              <h1 className="text-3xl sm:text-5xl lg:text-[48px] font-extrabold uppercase tracking-tight leading-[1.08] text-white">
+                Commercial Equipment Down? 3JI-Repair Pairs a Qualified Tech — and Drops Off a Beverage Loaner First.
               </h1>
 
               <p className="text-base sm:text-lg text-[#CCCCCC] leading-relaxed max-w-3xl">
-                When a frozen beverage or slushie machine goes down on a Friday night, waiting a week for a repair tech drains{" "}
-                <strong className="text-[#5ADCC8]">~$98/day in lost gross profit</strong>.{" "}
-                Exclusively across <strong className="text-white">Cuyahoga County, Ohio</strong>, 3J drops off a sanitized replacement loaner machine first so you never stop selling while we fix yours on our bench.
+                <strong className="text-white">3JI-Repair</strong> is{" "}
+                <strong className="text-white">3J Industrial Parts&apos;</strong>{" "}
+                commercial repair service in the{" "}
+                <strong className="text-[#5ADCC8]">Cuyahoga County, Ohio launch area</strong>.{" "}
+                When a refrigerator, cooler, freezer, ice machine, HVAC unit, or beverage machine goes down, we pair a qualified{" "}
+                <strong className="text-white">3JI-Repair</strong> technician to your job. And for frozen beverage or slushie machines — where downtime drains{" "}
+                <strong className="text-[#5ADCC8]">~$98/day in lost gross profit</strong>{" "}
+                — we drop off a sanitized replacement loaner machine first, repair yours on our bench, and return it ready to pour.
               </p>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
@@ -210,7 +227,7 @@ export default function FoodServicePage() {
                   href="#booking-form"
                   className="inline-flex items-center justify-center px-6 py-4 rounded bg-[#5ADCC8] hover:bg-[#4bcbb7] text-[#000000] font-extrabold text-sm uppercase tracking-wider transition-colors"
                 >
-                  Request Emergency Repair / Loaner Swap →
+                  Request 3JI-Repair Dispatch / Loaner Swap →
                 </a>
                 <a
                   href="#pricing-care-plan"
@@ -225,10 +242,10 @@ export default function FoodServicePage() {
             <div className="lg:col-span-4 rounded-xl bg-[#0A0A0A] border-2 border-[#5ADCC8] p-6 space-y-4">
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-[#5ADCC8] font-bold uppercase">
-                  DIVISION 02 DISPATCH
+                  3JI-REPAIR DISPATCH
                 </span>
                 <span className="px-2 py-0.5 rounded bg-[#1A1A1A] text-white">
-                  Cuyahoga County Only
+                  Cuyahoga County Launch Area
                 </span>
               </div>
               <div className="space-y-1">
@@ -250,7 +267,7 @@ export default function FoodServicePage() {
                   ✓ <strong className="text-white">Loaner Machine Included FREE</strong> inside Monthly Care Plans ($149–$199/mo)
                 </p>
                 <p>
-                  ✓ <strong className="text-[#5ADCC8]">Estimate within 24 hours</strong> on all service &amp; care-plan quotes
+                  ✓ <strong className="text-[#5ADCC8]">Estimate within 24 hours</strong> on all 3JI-Repair service &amp; care-plan quotes
                 </p>
               </div>
             </div>
@@ -258,18 +275,84 @@ export default function FoodServicePage() {
         </div>
       </section>
 
-      {/* HOW THE LOANER SWAP WORKS */}
+      {/* FULL 3JI-REPAIR EQUIPMENT SCOPE (JASON'S LIST + ADJACENT MACHINES) */}
+      <section
+        id="equipment-scope"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-[#262626] space-y-10"
+      >
+        <div>
+          <span className="text-xs font-mono uppercase tracking-widest text-[#5ADCC8] font-bold">
+            3JI-REPAIR EQUIPMENT SCOPE · CUYAHOGA COUNTY, OHIO LAUNCH AREA
+          </span>
+          <h2 className="mt-2 text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
+            Commercial Refrigeration, Ice, HVAC &amp; Beverage Equipment We Service
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-[#CCCCCC] max-w-3xl">
+            Every <strong className="text-white">3JI-Repair</strong> job is paired with a qualified technician across our full commercial equipment scope in Cuyahoga County:
+          </p>
+        </div>
+
+        {/* Complete 15-Item Equipment Scope Pill Grid */}
+        <div
+          data-testid="equipment-scope-grid"
+          className="rounded-xl bg-[#0A0A0A] border border-[#5ADCC8]/50 p-6 space-y-4"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#1A1A1A] pb-3">
+            <span className="text-xs font-mono uppercase text-[#5ADCC8] font-bold">
+              COMPLETE 3JI-REPAIR COMMERCIAL EQUIPMENT LIST ({REPAIR_EQUIPMENT_SCOPE.length} CATEGORIES)
+            </span>
+            <span className="text-xs font-mono text-[#CCCCCC]">
+              Cuyahoga County Service Area
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {REPAIR_EQUIPMENT_SCOPE.map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-2.5 px-3.5 py-2.5 rounded bg-[#000000] border border-[#262626] text-xs sm:text-sm font-semibold text-white"
+              >
+                <span className="h-2 w-2 rounded-full bg-[#5ADCC8] flex-shrink-0" />
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {EQUIPMENT_CATEGORIES.map((eq) => (
+            <div
+              key={eq.step}
+              className="rounded-xl bg-[#0A0A0A] border border-[#262626] p-6 space-y-3"
+            >
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="px-2.5 py-0.5 rounded bg-[#1A1A1A] text-[#5ADCC8] font-bold">
+                  {eq.badge}
+                </span>
+                <span className="text-[#999999]">3JI-Repair · Cuyahoga County</span>
+              </div>
+              <h3 className="text-xl font-extrabold uppercase text-white">
+                {eq.title}
+              </h3>
+              <p className="text-sm text-[#CCCCCC] leading-relaxed">
+                {eq.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* HOW THE LOANER SWAP WORKS (4 STEPS) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-[#262626]">
         <div className="mb-10">
           <span className="text-xs font-mono uppercase tracking-widest text-[#5ADCC8] font-bold">
-            ZERO-DOWNTIME WORKFLOW · CUYAHOGA COUNTY LOANER FLEET
+            ZERO-DOWNTIME WORKFLOW · 3JI-REPAIR LOANER FLEET
           </span>
           <h2 className="mt-2 text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
-            How the Loaner Swap Works
+            How the 3JI-Repair Loaner Workflow Works (4 Steps)
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {LOANER_STEPS.map((item) => (
             <div
               key={item.number}
@@ -279,14 +362,14 @@ export default function FoodServicePage() {
                 <span className="h-9 w-9 rounded bg-[#5ADCC8] text-[#000000] font-mono font-extrabold text-base flex items-center justify-center">
                   {item.number}
                 </span>
-                <span className="text-xs font-mono uppercase text-[#5ADCC8]">
-                  Ohio Food Code OAC 3717-1-08.1
+                <span className="text-[11px] font-mono uppercase text-[#5ADCC8]">
+                  3JI-Repair Step 0{item.number}
                 </span>
               </div>
-              <h3 className="text-lg sm:text-xl font-extrabold uppercase text-white pt-1">
+              <h3 className="text-base sm:text-lg font-extrabold uppercase text-white pt-1">
                 {item.title}
               </h3>
-              <p className="text-sm text-[#CCCCCC] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#CCCCCC] leading-relaxed">
                 {item.description}
               </p>
             </div>
@@ -456,13 +539,13 @@ export default function FoodServicePage() {
                     <span className="text-[#5ADCC8] font-bold uppercase">
                       YOUR {daysDown}-DAY DOWNTIME LOSS: ${selectedWaitLoss.toLocaleString()}
                     </span>
-                    <span className="text-white font-bold">VS. 3J PROTECTION</span>
+                    <span className="text-white font-bold">VS. 3JI-REPAIR CARE PLAN</span>
                   </div>
                   <p className="text-xs sm:text-sm text-white leading-relaxed">
                     Just <strong>two days of downtime (~${dailyLostProfit * 2})</strong>{" "}
                     costs as much as an entire month of the{" "}
                     <strong className="text-[#5ADCC8]">
-                      3J Monthly Care Plan ($149–$199/mo per location · $79–$99/mo single-machine)
+                      3JI-Repair Monthly Care Plan ($149–$199/mo per location · $79–$99/mo single-machine)
                     </strong>{" "}
                     — which includes <strong>FREE loaner machine swaps ($0)</strong>{" "}
                     and priority Cuyahoga County dispatch, or start with a{" "}
@@ -477,49 +560,15 @@ export default function FoodServicePage() {
         </div>
       </section>
 
-      {/* EQUIPMENT WE SERVICE */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-[#262626]">
-        <div className="mb-10">
-          <span className="text-xs font-mono uppercase tracking-widest text-[#5ADCC8] font-bold">
-            COMMERCIAL BAR, RESTAURANT &amp; CONVENIENCE STORE FLEET · CUYAHOGA COUNTY, OH
-          </span>
-          <h2 className="mt-2 text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
-            Equipment We Service in Cuyahoga County
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {EQUIPMENT_CATEGORIES.map((eq) => (
-            <div
-              key={eq.step}
-              className="rounded-xl bg-[#0A0A0A] border border-[#262626] p-6 space-y-3"
-            >
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="px-2.5 py-0.5 rounded bg-[#1A1A1A] text-[#5ADCC8] font-bold">
-                  {eq.badge}
-                </span>
-                <span className="text-[#999999]">Cuyahoga County, OH Only</span>
-              </div>
-              <h3 className="text-xl font-extrabold uppercase text-white">
-                {eq.title}
-              </h3>
-              <p className="text-sm text-[#CCCCCC] leading-relaxed">
-                {eq.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* TRANSPARENT PRICING & CARE PLAN CARDS (LOCKED NUMBERS) */}
       <section
         id="pricing-care-plan"
-        className="bg-[#050505] border-b border-[#262626] py-16"
+        className="bg-[#000000] border-b border-[#262626] py-16"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <div>
             <span className="text-xs font-mono uppercase tracking-widest text-[#5ADCC8] font-bold">
-              NO SURPRISE INVOICES · LOCKED DIVISION 02 RATE SCHEDULE
+              NO SURPRISE INVOICES · LOCKED 3JI-REPAIR (DIVISION 02) RATE SCHEDULE
             </span>
             <h2 className="mt-2 text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
               Transparent Pricing &amp; Monthly Care Plans
@@ -530,7 +579,7 @@ export default function FoodServicePage() {
             {/* Rate Card Table */}
             <div className="lg:col-span-7 rounded-xl bg-[#0A0A0A] border border-[#262626] p-6 sm:p-8 space-y-4">
               <h3 className="text-xl font-extrabold uppercase text-white border-b border-[#1A1A1A] pb-3">
-                Standard Diagnostic, Labor &amp; Loaner Rates
+                3JI-Repair Diagnostic, Labor &amp; Loaner Rates
               </h3>
 
               <div className="divide-y divide-[#1A1A1A] text-sm">
@@ -562,7 +611,7 @@ export default function FoodServicePage() {
                   <div>
                     <strong className="text-white block">Field Labor Rate</strong>
                     <span className="text-xs text-[#CCCCCC]">
-                      On-site commercial appliance troubleshooting &amp; service in Cuyahoga County
+                      On-site commercial equipment troubleshooting &amp; service in Cuyahoga County
                     </span>
                   </div>
                   <span className="font-mono font-extrabold text-white text-base">
@@ -576,7 +625,7 @@ export default function FoodServicePage() {
                       Refrigeration / Master Labor Rate
                     </strong>
                     <span className="text-xs text-[#CCCCCC]">
-                      Sealed-system compressor, evaporator, glycol &amp; EPA 608 work
+                      Sealed-system compressor, walk-in, HVAC, glycol &amp; EPA 608 work
                     </span>
                   </div>
                   <span className="font-mono font-extrabold text-white text-base">
@@ -625,12 +674,12 @@ export default function FoodServicePage() {
                     MOST POPULAR · ZERO DOWNTIME
                   </span>
                   <span className="text-xs font-mono text-[#5ADCC8]">
-                    Cuyahoga County, OH
+                    Cuyahoga County Launch Area
                   </span>
                 </div>
 
                 <h3 className="text-2xl font-extrabold uppercase text-white">
-                  3J Monthly Care Plan
+                  3JI-Repair Monthly Care Plan
                 </h3>
 
                 <div className="p-4 rounded-lg bg-[#000000] border border-[#5ADCC8]/50 space-y-2">
@@ -670,7 +719,7 @@ export default function FoodServicePage() {
                       <span className="text-[#5ADCC8] font-bold">✓</span>
                       <span>
                         <strong className="text-white">Priority Same-Day Dispatch</strong>{" "}
-                        across Cuyahoga County, Ohio
+                        across the Cuyahoga County, Ohio service area
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -686,7 +735,7 @@ export default function FoodServicePage() {
                       <span className="text-[#5ADCC8] font-bold">✓</span>
                       <span>
                         <strong className="text-white">
-                          Bi-Annual Commercial Ice Machine PM
+                          Bi-Annual Commercial Ice Machine &amp; Cooler PM
                         </strong>{" "}
                         &amp; contract parts markup discount (<strong>25%</strong> vs. 35%)
                       </span>
@@ -699,7 +748,7 @@ export default function FoodServicePage() {
                 href="#booking-form"
                 className="w-full text-center px-6 py-3.5 rounded bg-[#5ADCC8] hover:bg-[#4bcbb7] text-[#000000] font-extrabold text-xs uppercase tracking-wider transition-colors"
               >
-                Enroll or Request Service Below →
+                Enroll or Request 3JI-Repair Service Below →
               </a>
             </div>
           </div>
@@ -715,15 +764,15 @@ export default function FoodServicePage() {
         <div className="rounded-xl bg-[#0A0A0A] border border-[#262626] p-6 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-mono uppercase tracking-widest text-[#5ADCC8] font-bold">
-              EXCLUSIVE SERVICE TERRITORY · CUYAHOGA COUNTY, OHIO MUNICIPALITIES
+              3JI-REPAIR LAUNCH &amp; SERVICE AREA · CUYAHOGA COUNTY, OHIO MUNICIPALITIES
             </span>
             <span className="text-xs font-mono text-[#CCCCCC]">
               ZIP Codes 441xx · 44017 · 44022 · 44040 · 44070
             </span>
           </div>
           <p className="text-xs sm:text-sm text-[#CCCCCC] leading-relaxed">
-            Division 02 commercial repair and loaner delivery serves{" "}
-            <strong className="text-white">Cuyahoga County, Ohio Only</strong> — including{" "}
+            <strong className="text-white">3JI-Repair</strong> (Division 02 commercial repair and loaner delivery) currently serves our{" "}
+            <strong className="text-white">Cuyahoga County, Ohio launch area</strong> — including{" "}
             {CUYAHOGA_COUNTY_CITIES.slice(0, 24).join(", ")}, and all surrounding Cuyahoga County communities.
           </p>
         </div>
@@ -733,10 +782,10 @@ export default function FoodServicePage() {
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1A1A1A] pb-5">
             <div>
               <span className="text-xs font-mono uppercase tracking-widest text-[#5ADCC8] font-bold">
-                CUYAHOGA COUNTY COMMERCIAL DISPATCH &amp; CARE PLAN INTAKE
+                3JI-REPAIR · CUYAHOGA COUNTY COMMERCIAL DISPATCH &amp; CARE PLAN INTAKE
               </span>
               <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-white">
-                Book Emergency Repair, Loaner Swap, or Care Plan
+                Book 3JI-Repair Service, Loaner Swap, or Care Plan
               </h2>
               <p className="mt-1 text-sm text-[#CCCCCC]">
                 Submits directly to{" "}
@@ -763,18 +812,18 @@ export default function FoodServicePage() {
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="px-3 py-1 rounded bg-[#5ADCC8] text-[#000000] font-mono font-extrabold text-xs uppercase">
-                  Cuyahoga Booking Logged · Ref #{submittedRef}
+                  3JI-Repair Booking Logged · Ref #{submittedRef}
                 </span>
                 <span className="text-xs font-mono text-[#5ADCC8] font-bold uppercase">
                   Verified Location: {matchedLocality}
                 </span>
               </div>
               <h3 className="text-2xl font-extrabold uppercase text-white">
-                Service &amp; Loaner Request Sent to {BRAND.founder}
+                3JI-Repair Service Request Sent to {BRAND.founder}
               </h3>
               <p className="text-sm sm:text-base text-[#CCCCCC] leading-relaxed">
-                We have received the service request for{" "}
-                <strong className="text-white">{businessName}</strong> in{" "}
+                We have received the <strong className="text-white">3JI-Repair</strong>{" "}
+                service request for <strong className="text-white">{businessName}</strong> in{" "}
                 <strong className="text-[#5ADCC8]">{matchedLocality}</strong> and routed it to{" "}
                 <a
                   href={BRAND.emailHref}
@@ -924,7 +973,7 @@ export default function FoodServicePage() {
                       data-testid="cuyahoga-valid-badge"
                       className="text-xs font-mono text-[#5ADCC8] mt-1 block"
                     >
-                      ✓ Verified Service Area: {matchedLocality}
+                      ✓ Verified 3JI-Repair Launch Area: {matchedLocality}
                     </span>
                   )}
                 </div>
@@ -958,7 +1007,7 @@ export default function FoodServicePage() {
                     htmlFor="fs-machine"
                     className="block text-xs font-mono uppercase text-[#CCCCCC] mb-1.5"
                   >
-                    Equipment Type *
+                    Equipment Type (3JI-Repair Scope) *
                   </label>
                   <select
                     id="fs-machine"
@@ -966,18 +1015,11 @@ export default function FoodServicePage() {
                     onChange={(e) => setMachineType(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded bg-[#000000] border border-[#383838] text-white text-sm focus:outline-none focus:border-[#5ADCC8]"
                   >
-                    <option value="Frozen Beverage / Slushie Machine">
-                      1. Frozen Beverage / Slushie Machine
-                    </option>
-                    <option value="Commercial Ice Machine">
-                      2. Commercial Ice Machine
-                    </option>
-                    <option value="Reach-In Cooler / Bar Refrigeration">
-                      3. Reach-In Cooler / Bar Refrigeration
-                    </option>
-                    <option value="Draft Beer / Glycol Chiller">
-                      4. Draft Beer / Glycol Chiller
-                    </option>
+                    {REPAIR_EQUIPMENT_SCOPE.map((eqName) => (
+                      <option key={eqName} value={eqName}>
+                        {eqName}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -986,7 +1028,7 @@ export default function FoodServicePage() {
                     htmlFor="fs-loaner"
                     className="block text-xs font-mono uppercase text-[#CCCCCC] mb-1.5"
                   >
-                    Need a Loaner Machine Dropped Off?
+                    Need a Beverage Loaner Machine Dropped Off?
                   </label>
                   <select
                     id="fs-loaner"
@@ -995,10 +1037,10 @@ export default function FoodServicePage() {
                     className="w-full px-3.5 py-2.5 rounded bg-[#000000] border border-[#383838] text-white text-sm focus:outline-none focus:border-[#5ADCC8]"
                   >
                     <option value="Yes — Drop Off Loaner Machine">
-                      Yes — Drop Off Replacement Loaner First
+                      Yes — Drop Off Replacement Loaner First (Beverage/Slushie)
                     </option>
                     <option value="No — On-Site Diagnostic / Repair Only">
-                      No — On-Site Diagnostic ($99 Credited)
+                      No — On-Site Diagnostic / Repair ($99 Credited)
                     </option>
                   </select>
                 </div>
@@ -1042,14 +1084,14 @@ export default function FoodServicePage() {
                   required
                   value={symptom}
                   onChange={(e) => setSymptom(e.target.value)}
-                  placeholder="e.g. Bunn Ultra-2 left hopper not freezing, auger motor clicking, need loaner before Friday service..."
+                  placeholder="e.g. Bunn Ultra-2 left hopper not freezing, True reach-in cooler warm, or Manitowoc ice machine fault..."
                   className="w-full px-3.5 py-2.5 rounded bg-[#000000] border border-[#383838] text-white text-sm focus:outline-none focus:border-[#5ADCC8]"
                 />
               </div>
 
               <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <p className="text-xs text-[#CCCCCC]">
-                  <strong className="text-[#5ADCC8]">Cuyahoga County, Ohio Only:</strong>{" "}
+                  <strong className="text-[#5ADCC8]">3JI-Repair (Cuyahoga County Launch Area):</strong>{" "}
                   $99 diagnostic is credited toward repair. Guaranteed{" "}
                   <strong className="text-white">estimate within 24 hours</strong>.
                 </p>
@@ -1061,7 +1103,7 @@ export default function FoodServicePage() {
                 >
                   {submitting
                     ? "Validating & Submitting..."
-                    : "Request Cuyahoga Service / Loaner Swap →"}
+                    : "Request 3JI-Repair Service / Loaner Swap →"}
                 </button>
               </div>
             </form>

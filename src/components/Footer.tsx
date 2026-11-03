@@ -23,13 +23,13 @@ export default function Footer() {
 
           <div className="flex items-start gap-3 p-3 rounded bg-[#000000] border border-[#5ADCC8]/40">
             <span className="mt-0.5 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-bold uppercase bg-[#5ADCC8] text-[#000000]">
-              DIV 02 · CUYAHOGA ONLY
+              DIV 02 · 3JI-REPAIR · CUYAHOGA COUNTY
             </span>
             <p className="text-xs sm:text-sm text-white">
               <strong>
-                Division 02 Commercial Equipment Repair &amp; Loaner Program: Cuyahoga County, Ohio Only
+                Division 02 — 3JI-Repair Commercial Equipment Service &amp; Loaner Program: Cuyahoga County, Ohio Launch Area Only
               </strong>{" "}
-              — Frozen beverage/slushie machines, ice machines, reach-in coolers, and loaner machine swaps exclusively within Cuyahoga County, OH.
+              — Refrigerators, coolers, freezers, ice machines, HVAC, beverage &amp; slushie machines, and loaner machine swaps exclusively within Cuyahoga County, OH.
             </p>
           </div>
         </div>
@@ -96,7 +96,7 @@ export default function Footer() {
                 href="/food-service"
                 className="hover:text-[#5ADCC8] transition-colors"
               >
-                Food Service &amp; Loaner Fleet (Cuyahoga County, OH Only)
+                3JI-Repair — Food Service &amp; Commercial Equipment (Cuyahoga County)
               </Link>
             </li>
             <li>
@@ -104,7 +104,7 @@ export default function Footer() {
                 href="/about"
                 className="hover:text-[#5ADCC8] transition-colors"
               >
-                About Jason Allen &amp; The Junior Tech Program
+                About Jason Allen &amp; Join 3JI-Repair
               </Link>
             </li>
             <li>

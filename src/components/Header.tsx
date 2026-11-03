@@ -32,8 +32,8 @@ export default function Header() {
             </span>
             <span className="hidden lg:inline text-[#383838]">|</span>
             <span className="hidden lg:inline text-[#CCCCCC]">
-              Div 02 Commercial Equipment &amp; Loaners:{" "}
-              <strong className="text-[#5ADCC8]">Cuyahoga County, OH Only</strong>
+              Div 02 (<strong>3JI-Repair</strong>):{" "}
+              <strong className="text-[#5ADCC8]">Cuyahoga County, OH Launch Area</strong>
             </span>
           </div>
           <div className="flex items-center gap-4 ml-auto">
