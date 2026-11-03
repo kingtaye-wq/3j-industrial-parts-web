@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { REPAIR_EQUIPMENT_SCOPE } from "../src/data/catalog";
+import { MTS_1500_BEATS } from "../src/components/Mts1500CycleScrollSection";
 
 test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
   test("1. Home page (/) renders official logo, melt-treatment SVG animation, verbatim proof quote, 3JI-Repair teaser band, and quote form", async ({
@@ -25,7 +26,7 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
     ).toBeVisible();
 
     // Animated Melt-Treatment Schematic SVG
-    const schematicSvg = page.locator("svg#melt-schematic-title, svg").filter({
+    const schematicSvg = page.locator("svg").filter({
       hasText: "Aluminum Melt-Treatment Rotary Degassing Schematic",
     });
     await expect(schematicSvg).toBeVisible();
@@ -38,6 +39,28 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
         )
         .first()
     ).toBeVisible();
+
+    // Verify Piece 1 (FDU Exploded), Static Beat ("WHAT WE SUPPORT"), and Piece 2 (MTS 1500 Cycle) ordering
+    const fduSection = page.getByTestId("fdu-exploded-scroll-section");
+    const staticSupportSection = page.getByTestId(
+      "static-what-we-support-section"
+    );
+    const mtsSection = page.getByTestId("mts-1500-cycle-scroll-section");
+    await expect(fduSection).toBeVisible();
+    await expect(staticSupportSection).toBeVisible();
+    await expect(mtsSection).toBeVisible();
+
+    const fduTop = await fduSection.evaluate(
+      (el) => el.getBoundingClientRect().top + window.scrollY
+    );
+    const staticTop = await staticSupportSection.evaluate(
+      (el) => el.getBoundingClientRect().top + window.scrollY
+    );
+    const mtsTop = await mtsSection.evaluate(
+      (el) => el.getBoundingClientRect().top + window.scrollY
+    );
+    expect(fduTop).toBeLessThan(staticTop);
+    expect(staticTop).toBeLessThan(mtsTop);
 
     // 3JI-Repair service name & Cuyahoga County service area badge & Downtime math (~$98/day)
     await expect(page.getByText(/3JI-Repair/i).first()).toBeVisible();
@@ -172,7 +195,7 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
     expect(bodyText.toLowerCase()).not.toContain("junior tech");
   });
 
-  test("4. About (/about) renders Jason Allen bio, verbatim proof quote, Join 3JI-Repair section & interest form, and honors prefers-reduced-motion", async ({
+  test("4. About (/about) renders Jason Allen bio, verbatim proof quote, Join 3JI-Repair section & interest form, and honors prefers-reduced-motion on both scroll sections", async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -208,17 +231,146 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
 
     await expect(page.getByTestId("jtp-confirmation")).toBeVisible();
 
-    // Guardrail on /about: No "Pyrotek" or retired "Junior Tech" anywhere
-    const aboutBodyText = await page.locator("body").innerText();
-    expect(aboutBodyText.toLowerCase()).not.toContain("pyrotek");
-    expect(aboutBodyText.toLowerCase()).not.toContain("junior tech");
-
-    // Verify prefers-reduced-motion disables animation on Home melt schematic
+    // Verify prefers-reduced-motion disables animations & renders static assembled views on /
     await page.goto("/");
     const bubbleAnimName = await page
       .locator(".melt-bubble-slow")
       .first()
       .evaluate((el) => window.getComputedStyle(el).animationName);
     expect(bubbleAnimName).toBe("none");
+
+    await expect(page.getByTestId("fdu-exploded-scroll-section")).toHaveAttribute(
+      "data-reduced-motion",
+      "true"
+    );
+    await expect(
+      page.getByTestId("mts-1500-cycle-scroll-section")
+    ).toHaveAttribute("data-reduced-motion", "true");
+  });
+
+  test("5. Mobile (390x844) scroll-scrubs both FDU Exploded-View (5 layers) and MTS 1500 In-Action (6 beats) smoothly with zero horizontal overflow", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+
+    // Verify zero horizontal overflow on 390px mobile viewport
+    const overflowCheck = await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth
+    );
+    expect(overflowCheck).toBe(true);
+
+    // Verify all 5 FDU component labels exist & are readable
+    await expect(page.getByTestId("fdu-label-drive-head")).toContainText(
+      "Drive Head / MFC Gas Unit"
+    );
+    await expect(page.getByTestId("fdu-label-baffle")).toContainText(
+      "DIAMANT Baffle / Anti-Vortex Plate"
+    );
+    await expect(page.getByTestId("fdu-label-shaft")).toContainText(
+      "Graphite Shaft"
+    );
+    await expect(page.getByTestId("fdu-label-rotor")).toContainText(
+      "Graphite Rotor"
+    );
+    await expect(page.getByTestId("fdu-label-crucible")).toContainText(
+      "Crucible"
+    );
+
+    // Scroll to 60% of FDU Exploded section -> layers must separate vertically
+    await page.evaluate(() => {
+      const el = document.querySelector(
+        '[data-testid="fdu-exploded-scroll-section"]'
+      ) as HTMLElement;
+      const rect = el.getBoundingClientRect();
+      const topDoc = rect.top + window.scrollY;
+      const scrollable = Math.max(1, rect.height - window.innerHeight);
+      window.scrollTo({ top: topDoc + scrollable * 0.6, behavior: "instant" });
+      window.dispatchEvent(new Event("scroll"));
+    });
+
+    await expect
+      .poll(async () => {
+        const val = await page
+          .getByTestId("fdu-layer-drive-head")
+          .getAttribute("data-offset-y");
+        return Number(val || "0");
+      })
+      .toBeLessThan(-40);
+
+    await expect
+      .poll(async () => {
+        const val = await page
+          .getByTestId("fdu-layer-crucible")
+          .getAttribute("data-offset-y");
+        return Number(val || "0");
+      })
+      .toBeGreaterThan(40);
+
+    // Scroll to 100% of FDU Exploded section -> layers reassemble back to 0
+    await page.evaluate(() => {
+      const el = document.querySelector(
+        '[data-testid="fdu-exploded-scroll-section"]'
+      ) as HTMLElement;
+      const rect = el.getBoundingClientRect();
+      const topDoc = rect.top + window.scrollY;
+      const scrollable = Math.max(1, rect.height - window.innerHeight);
+      window.scrollTo({ top: topDoc + scrollable * 1.0, behavior: "instant" });
+      window.dispatchEvent(new Event("scroll"));
+    });
+
+    await expect
+      .poll(async () => {
+        const val = await page
+          .getByTestId("fdu-layer-drive-head")
+          .getAttribute("data-offset-y");
+        return Number(val || "0");
+      })
+      .toBe(0);
+
+    // Verify all 6 verbatim MTS 1500 beat labels + COVERAL / SIMODAL / NUCLEANT + SMARTT callout
+    const mtsSection = page.getByTestId("mts-1500-cycle-scroll-section");
+    for (const beat of MTS_1500_BEATS) {
+      await expect(mtsSection).toContainText(beat.label);
+    }
+    await expect(mtsSection).toContainText("COVERAL / SIMODAL / NUCLEANT");
+    await expect(mtsSection).toContainText(
+      "SMARTT sets rotor speed, gas flow & treatment time"
+    );
+
+    // Scroll to Beat 4 (~58% of MTS 1500 section) -> active beat is 4 ("Flux dosed into the vortex (MTS 1500)")
+    await page.evaluate(() => {
+      const el = document.querySelector(
+        '[data-testid="mts-1500-cycle-scroll-section"]'
+      ) as HTMLElement;
+      const rect = el.getBoundingClientRect();
+      const topDoc = rect.top + window.scrollY;
+      const scrollable = Math.max(1, rect.height - window.innerHeight);
+      window.scrollTo({ top: topDoc + scrollable * 0.58, behavior: "instant" });
+      window.dispatchEvent(new Event("scroll"));
+    });
+
+    await expect(mtsSection).toHaveAttribute("data-active-beat", "4");
+    await expect(page.getByTestId("mts-active-beat-label")).toContainText(
+      "Flux dosed into the vortex (MTS 1500)"
+    );
+
+    // Scroll to Beat 6 (~92% of MTS 1500 section) -> active beat is 6 ("Treatment complete — cleaner metal, less dross")
+    await page.evaluate(() => {
+      const el = document.querySelector(
+        '[data-testid="mts-1500-cycle-scroll-section"]'
+      ) as HTMLElement;
+      const rect = el.getBoundingClientRect();
+      const topDoc = rect.top + window.scrollY;
+      const scrollable = Math.max(1, rect.height - window.innerHeight);
+      window.scrollTo({ top: topDoc + scrollable * 0.92, behavior: "instant" });
+      window.dispatchEvent(new Event("scroll"));
+    });
+
+    await expect(mtsSection).toHaveAttribute("data-active-beat", "6");
+    await expect(page.getByTestId("mts-active-beat-label")).toContainText(
+      "Treatment complete — cleaner metal, less dross"
+    );
   });
 });

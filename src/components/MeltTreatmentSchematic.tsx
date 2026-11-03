@@ -257,7 +257,7 @@ export default function MeltTreatmentSchematic() {
               fontSize="8"
               fontFamily="monospace"
             >
-              718°C BATH VERIFIED
+              MOLTEN BATH VERIFIED
             </text>
           </g>
 
