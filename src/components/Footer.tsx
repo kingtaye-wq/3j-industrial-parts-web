@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="bg-[#000000] border-t border-[#262626] text-[#CCCCCC]">
       {/* Explicit Service Territory & SLA Banner */}
       <div className="bg-[#0A0A0A] border-b border-[#262626]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-start gap-3 p-3 rounded bg-[#000000] border border-[#262626]">
             <span className="mt-0.5 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-bold uppercase bg-[#1A1A1A] text-[#5ADCC8] border border-[#5ADCC8]/40">
               DIV 01 · USA
@@ -18,18 +18,6 @@ export default function Footer() {
                 FDU, MTS 1500, SMARTT &amp; ThermaTest NGIII 5000
               </span>{" "}
               systems.
-            </p>
-          </div>
-
-          <div className="flex items-start gap-3 p-3 rounded bg-[#000000] border border-[#5ADCC8]/40">
-            <span className="mt-0.5 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-bold uppercase bg-[#5ADCC8] text-[#000000]">
-              DIV 02 · 3JI-REPAIR · CUYAHOGA COUNTY
-            </span>
-            <p className="text-xs sm:text-sm text-white">
-              <strong>
-                Division 02 — 3JI-Repair Commercial Equipment Service &amp; Loaner Program: Cuyahoga County, Ohio Launch Area Only
-              </strong>{" "}
-              — Refrigerators, coolers, freezers, ice machines, HVAC, beverage &amp; slushie machines, and loaner machine swaps exclusively within Cuyahoga County, OH.
             </p>
           </div>
         </div>
@@ -93,18 +81,10 @@ export default function Footer() {
             </li>
             <li>
               <Link
-                href="/food-service"
-                className="hover:text-[#5ADCC8] transition-colors"
-              >
-                3JI-Repair — Food Service &amp; Commercial Equipment (Cuyahoga County)
-              </Link>
-            </li>
-            <li>
-              <Link
                 href="/about"
                 className="hover:text-[#5ADCC8] transition-colors"
               >
-                About Jason Allen &amp; Join 3JI-Repair
+                About Jason Allen &amp; Melt-Treatment Expertise
               </Link>
             </li>
             <li>
@@ -149,11 +129,22 @@ export default function Footer() {
             </p>
             <p className="text-xs text-[#CCCCCC] pt-1">
               Division 01: Nationwide U.S. (USA)
-              <br />
-              Division 02: Cuyahoga County, Ohio Only
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Required Single Cross-Link to Commercial Site */}
+      <div className="border-t border-[#1A1A1A] bg-[#0A0A0A] py-3 px-4 text-center text-xs font-mono">
+        <span className="text-[#999999]">Need commercial refrigeration, slushie, or ice machine repair in Greater Cleveland? </span>
+        <a
+          href="https://3ji-repair-web.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#5ADCC8] font-bold hover:underline inline-flex items-center gap-1"
+        >
+          Commercial equipment repair &amp; maintenance → 3JI-Repair
+        </a>
       </div>
 
       {/* Bottom Legal & OEM Independence Bar */}

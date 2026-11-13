@@ -8,7 +8,6 @@ import { BRAND } from "@/data/catalog";
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
   { href: "/parts-finder", label: "Parts Finder" },
-  { href: "/food-service", label: "Food Service (Cuyahoga County)" },
   { href: "/about", label: "About" },
 ];
 
@@ -32,8 +31,15 @@ export default function Header() {
             </span>
             <span className="hidden lg:inline text-[#383838]">|</span>
             <span className="hidden lg:inline text-[#CCCCCC]">
-              Div 02 (<strong>3JI-Repair</strong>):{" "}
-              <strong className="text-[#5ADCC8]">Cuyahoga County, OH Launch Area</strong>
+              Commercial Equipment Repair →{" "}
+              <a
+                href="https://3ji-repair-web.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#5ADCC8] hover:underline font-semibold"
+              >
+                3JI-Repair
+              </a>
             </span>
           </div>
           <div className="flex items-center gap-4 ml-auto">

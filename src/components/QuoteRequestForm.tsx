@@ -246,9 +246,6 @@ export default function QuoteRequestForm({
                 <option value="Foundry Consulting / Health Check">
                   Div 01 — Melt-Treatment Consulting / Equipment Health Check
                 </option>
-                <option value="3JI-Repair Commercial Equipment (Cuyahoga County, OH Launch Area)">
-                  Div 02 — 3JI-Repair Commercial Equipment &amp; Loaner (Cuyahoga County Launch Area)
-                </option>
               </select>
             </div>
 

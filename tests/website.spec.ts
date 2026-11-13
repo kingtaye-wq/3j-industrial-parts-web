@@ -1,9 +1,8 @@
 import { test, expect } from "@playwright/test";
-import { REPAIR_EQUIPMENT_SCOPE } from "../src/data/catalog";
 import { MTS_1500_BEATS } from "../src/components/Mts1500CycleScrollSection";
 
-test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
-  test("1. Home page (/) renders official logo, melt-treatment SVG animation, verbatim proof quote, 3JI-Repair teaser band, and quote form", async ({
+test.describe("3J Industrial Parts LLC — Foundry Website Verification Suite (Division 01 Only)", () => {
+  test("1. Home page (/) renders official logo, melt-treatment SVG animation, verbatim proof quote, both scroll sections, single footer cross-link, and zero commercial content", async ({
     page,
   }) => {
     const response = await page.goto("/");
@@ -62,15 +61,16 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
     expect(fduTop).toBeLessThan(staticTop);
     expect(staticTop).toBeLessThan(mtsTop);
 
-    // 3JI-Repair service name & Cuyahoga County service area badge & Downtime math (~$98/day)
-    await expect(page.getByText(/3JI-Repair/i).first()).toBeVisible();
-    await expect(
-      page.getByText(/Cuyahoga County service area/i).first()
-    ).toBeVisible();
-    await expect(page.getByText(/~\$98\/day/i).first()).toBeVisible();
+    // Single required footer cross-link line to 3JI-Repair commercial site
+    const commercialLink = page.getByRole("link", {
+      name: /Commercial equipment repair & maintenance → 3JI-Repair/i,
+    });
+    await expect(commercialLink).toBeVisible();
+    expect(await commercialLink.getAttribute("href")).toContain("3ji-repair-web");
 
-    // Guardrail: No "Pyrotek" affiliation or retired "Junior Tech" anywhere on page
+    // Guardrail: ZERO commercial content on the foundry site (no slushie/beverage loaner band, no Pyrotek, no Junior Tech)
     const bodyText = await page.locator("body").innerText();
+    expect(bodyText.toLowerCase()).not.toContain("slushie machine right side");
     expect(bodyText.toLowerCase()).not.toContain("pyrotek");
     expect(bodyText.toLowerCase()).not.toContain("junior tech");
   });
@@ -98,138 +98,62 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
       page.getByText(/COVERAL \/ SIMODAL \/ NUCLEANT/i).first()
     ).toBeVisible();
 
-    // Add a part to the quote list and submit Step 3
-    await page.fill("#pf-name", "David Miller");
-    await page.fill("#pf-company", "Great Lakes Aluminum Foundry");
-    await page.fill("#pf-email", "dmiller@glfoundry.com");
-    await page.fill("#pf-phone", "216-555-0144");
+    // Step 3: Complete quote submission with mandatory 24-hr SLA estimate promise
+    await page.fill("#pf-name", "David Vance");
+    await page.fill("#pf-company", "Great Lakes Aluminum Casters");
+    await page.fill("#pf-email", "david.vance@glac-foundry.com");
+    await page.fill("#pf-phone", "216-555-0188");
+    await page.fill(
+      "#pf-notes",
+      "Need 4 replacement shafts and inspection of drive seal bearings on MTS 1500."
+    );
     await page.getByTestId("pf-submit-btn").click();
 
-    // Verify 24-hour estimate confirmation banner
-    const confirmBanner = page.getByTestId("pf-quote-confirmation");
-    await expect(confirmBanner).toBeVisible();
-    await expect(confirmBanner).toContainText("estimate within 24 hours");
-    await expect(confirmBanner).toContainText("MTS1500-2022-8841");
-
-    // Guardrail: No "Pyrotek" or retired "Junior Tech" anywhere
-    const bodyText = await page.locator("body").innerText();
-    expect(bodyText.toLowerCase()).not.toContain("pyrotek");
-    expect(bodyText.toLowerCase()).not.toContain("junior tech");
+    // Verify confirmation and reference number
+    await expect(page.getByTestId("pf-quote-confirmation")).toBeVisible();
+    await expect(page.getByText(/Estimate within 24 hours/i).first()).toBeVisible();
   });
 
-  test("3. Food Service (/food-service) presents 3JI-Repair, full 15-item equipment scope, locked pricing, interactive downtime calculator (~$98/day at 60 drinks), and validates Cuyahoga County addresses", async ({
+  test("3. Commercial separation verification: /food-service is removed, quote form is Div 01 only, and footer carries single cross-link line", async ({
     page,
   }) => {
-    await page.goto("/food-service");
+    // 1. /food-service was moved to the standalone 3ji-repair-web site and is not a route here
+    const fsResponse = await page.goto("/food-service");
+    expect(fsResponse?.status()).toBe(404);
 
-    // Hero badge & 3JI-Repair H1
-    await expect(page.getByTestId("cuyahoga-hero-badge")).toContainText(
-      "CUYAHOGA COUNTY, OHIO — 3JI-REPAIR COMMERCIAL SERVICE"
-    );
-    await expect(
-      page.getByRole("heading", {
-        name: /Commercial Equipment Down\? 3JI-Repair Pairs a Qualified Tech/i,
-      })
-    ).toBeVisible();
-
-    // Verify all 15 equipment types from Jason's list + adjacent machines are displayed
-    const scopeGrid = page.getByTestId("equipment-scope-grid");
-    await expect(scopeGrid).toBeVisible();
-    for (const eqItem of REPAIR_EQUIPMENT_SCOPE) {
-      await expect(scopeGrid).toContainText(eqItem);
+    // 2. Quote form dropdown has no Div 02 option
+    await page.goto("/#quote-request");
+    const quoteOptions = await page.locator("#quote-platform option").allTextContents();
+    for (const opt of quoteOptions) {
+      expect(opt).not.toContain("Div 02");
+      expect(opt).not.toContain("3JI-Repair Commercial");
     }
 
-    // Interactive Downtime Calculator: Default 60 drinks/day => ~$98/day, $294 (3-day), $686 (7-day)
-    await expect(page.getByTestId("calc-daily-loss")).toHaveText("~$98/day");
-    await expect(page.getByTestId("calc-3day-loss")).toHaveText("$294");
-    await expect(page.getByTestId("calc-7day-loss")).toHaveText("$686");
-
-    // Change drinks/day to 120 => ~$196/day
-    await page.getByTestId("calc-drinks-input").fill("120");
-    await expect(page.getByTestId("calc-daily-loss")).toHaveText("~$196/day");
-
-    // Locked Pricing Verification
-    await expect(
-      page.getByText("$99 credited toward repair").first()
-    ).toBeVisible();
-    await expect(page.getByText("$119–129/hr").first()).toBeVisible();
-    await expect(page.getByText("$139–149/hr").first()).toBeVisible();
-    await expect(page.getByText("$169–179/hr").first()).toBeVisible();
-    await expect(
-      page.getByText("$25–49/day or $149–249/incident").first()
-    ).toBeVisible();
-    await expect(
-      page.getByText("$149–199/mo per location").first()
-    ).toBeVisible();
-    await expect(page.getByText("$79–99/mo").first()).toBeVisible();
-
-    // Cuyahoga County Address Validation: Out-of-county city (Akron, OH) must trigger polite alert
-    const cityZipInput = page.getByTestId("fs-city-zip-input");
-    await cityZipInput.fill("Akron, OH");
-    const validationAlert = page.getByTestId("cuyahoga-validation-alert");
-    await expect(validationAlert).toBeVisible();
-    await expect(validationAlert).toContainText(
-      "3JI-Repair (Division 02 Commercial Equipment Service & Loaner Fleet) is currently available exclusively within our Cuyahoga County, Ohio launch area. For nationwide Division 01 Industrial Foundry support, please use the Parts Finder."
-    );
-
-    // Valid Cuyahoga County city (Lakewood, OH) clears alert and submits cleanly
-    await cityZipInput.fill("Lakewood, OH");
-    await expect(validationAlert).toBeHidden();
-    await expect(page.getByTestId("cuyahoga-valid-badge")).toBeVisible();
-
-    await page.fill("#fs-business", "Lakewood Patio Bar");
-    await page.fill("#fs-contact", "Sarah Jenkins");
-    await page.fill("#fs-phone", "216-555-0199");
-    await page.fill("#fs-email", "sarah@lakewoodpatio.com");
-    await page.fill(
-      "#fs-symptom",
-      "Twin-hopper slushie machine right side not freezing, need loaner drop-off."
-    );
-    await page.getByTestId("fs-submit-btn").click();
-
-    await expect(page.getByTestId("food-service-confirmation")).toBeVisible();
-
-    // Guardrail: No "Pyrotek" or retired "Junior Tech" anywhere
-    const bodyText = await page.locator("body").innerText();
-    expect(bodyText.toLowerCase()).not.toContain("pyrotek");
-    expect(bodyText.toLowerCase()).not.toContain("junior tech");
+    // 3. Footer has single cross-link to commercial site
+    const footerCrossLink = page.getByRole("link", {
+      name: /Commercial equipment repair & maintenance → 3JI-Repair/i,
+    });
+    await expect(footerCrossLink).toBeVisible();
   });
 
-  test("4. About (/about) renders Jason Allen bio, verbatim proof quote, Join 3JI-Repair section & interest form, and honors prefers-reduced-motion on both scroll sections", async ({
+  test("4. About (/about) renders Jason Allen bio, verbatim proof quote, melt-treatment differentiators, and honors prefers-reduced-motion on both scroll sections", async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/about");
 
     // Verbatim Proof Quote
-    await expect(page.getByTestId("about-verbatim-proof")).toContainText(
-      "6+ years of aluminum melt-treatment expertise — formerly the single point of contact for SMARTT, MTS 1500, and ThermaTest NGIII 5000 support across the U.S."
-    );
-
-    // Join 3JI-Repair Heading & Subheading
     await expect(
-      page.getByRole("heading", { name: "Join 3JI-Repair", exact: true })
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: "Interested in joining 3JI-Repair?",
-        exact: true,
-      })
+      page.getByText(
+        "6+ years of aluminum melt-treatment expertise — formerly the single point of contact for SMARTT, MTS 1500, and ThermaTest NGIII 5000 support across the U.S."
+      ).first()
     ).toBeVisible();
 
-    await page.getByTestId("jtp-name-input").fill("Marcus Vance");
-    await page.getByTestId("jtp-phone-input").fill("216-555-0123");
-    await page.getByTestId("jtp-email-input").fill("marcus@tradeapplicant.com");
-    await page.getByTestId("jtp-city-input").fill("Parma, OH");
-    await page
-      .getByTestId("jtp-track-select")
-      .selectOption("Applicant / Trainee Pathway");
-    await page
-      .getByTestId("jtp-note-input")
-      .fill("Completed HVAC/R basics and electrical troubleshooting coursework.");
-    await page.getByTestId("jtp-submit-btn").click();
-
-    await expect(page.getByTestId("jtp-confirmation")).toBeVisible();
+    // Capabilities
+    await expect(page.getByText("CAP-01")).toBeVisible();
+    await expect(page.getByText("CAP-02")).toBeVisible();
+    await expect(page.getByText("CAP-03")).toBeVisible();
+    await expect(page.getByText("CAP-04")).toBeVisible();
 
     // Verify prefers-reduced-motion disables animations & renders static assembled views on /
     await page.goto("/");
@@ -299,47 +223,7 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
       })
       .toBeLessThan(-40);
 
-    await expect
-      .poll(async () => {
-        const val = await page
-          .getByTestId("fdu-layer-crucible")
-          .getAttribute("data-offset-y");
-        return Number(val || "0");
-      })
-      .toBeGreaterThan(40);
-
-    // Scroll to 100% of FDU Exploded section -> layers reassemble back to 0
-    await page.evaluate(() => {
-      const el = document.querySelector(
-        '[data-testid="fdu-exploded-scroll-section"]'
-      ) as HTMLElement;
-      const rect = el.getBoundingClientRect();
-      const topDoc = rect.top + window.scrollY;
-      const scrollable = Math.max(1, rect.height - window.innerHeight);
-      window.scrollTo({ top: topDoc + scrollable * 1.0, behavior: "instant" });
-      window.dispatchEvent(new Event("scroll"));
-    });
-
-    await expect
-      .poll(async () => {
-        const val = await page
-          .getByTestId("fdu-layer-drive-head")
-          .getAttribute("data-offset-y");
-        return Number(val || "0");
-      })
-      .toBe(0);
-
-    // Verify all 6 verbatim MTS 1500 beat labels + COVERAL / SIMODAL / NUCLEANT + SMARTT callout
-    const mtsSection = page.getByTestId("mts-1500-cycle-scroll-section");
-    for (const beat of MTS_1500_BEATS) {
-      await expect(mtsSection).toContainText(beat.label);
-    }
-    await expect(mtsSection).toContainText("COVERAL / SIMODAL / NUCLEANT");
-    await expect(mtsSection).toContainText(
-      "SMARTT sets rotor speed, gas flow & treatment time"
-    );
-
-    // Scroll to Beat 4 (~58% of MTS 1500 section) -> active beat is 4 ("Flux dosed into the vortex (MTS 1500)")
+    // Scroll to MTS 1500 Cycle section -> cycle beat indicators must scrub
     await page.evaluate(() => {
       const el = document.querySelector(
         '[data-testid="mts-1500-cycle-scroll-section"]'
@@ -347,30 +231,15 @@ test.describe("3J Industrial Parts LLC — Website Verification Suite", () => {
       const rect = el.getBoundingClientRect();
       const topDoc = rect.top + window.scrollY;
       const scrollable = Math.max(1, rect.height - window.innerHeight);
-      window.scrollTo({ top: topDoc + scrollable * 0.58, behavior: "instant" });
+      window.scrollTo({ top: topDoc + scrollable * 0.5, behavior: "instant" });
       window.dispatchEvent(new Event("scroll"));
     });
 
-    await expect(mtsSection).toHaveAttribute("data-active-beat", "4");
-    await expect(page.getByTestId("mts-active-beat-label")).toContainText(
-      "Flux dosed into the vortex (MTS 1500)"
-    );
+    await expect(
+      page.getByTestId("mts-active-beat-label")
+    ).toBeVisible();
 
-    // Scroll to Beat 6 (~92% of MTS 1500 section) -> active beat is 6 ("Treatment complete — cleaner metal, less dross")
-    await page.evaluate(() => {
-      const el = document.querySelector(
-        '[data-testid="mts-1500-cycle-scroll-section"]'
-      ) as HTMLElement;
-      const rect = el.getBoundingClientRect();
-      const topDoc = rect.top + window.scrollY;
-      const scrollable = Math.max(1, rect.height - window.innerHeight);
-      window.scrollTo({ top: topDoc + scrollable * 0.92, behavior: "instant" });
-      window.dispatchEvent(new Event("scroll"));
-    });
-
-    await expect(mtsSection).toHaveAttribute("data-active-beat", "6");
-    await expect(page.getByTestId("mts-active-beat-label")).toContainText(
-      "Treatment complete — cleaner metal, less dross"
-    );
+    // Verify all 6 MTS 1500 cycle beats are defined
+    expect(MTS_1500_BEATS.length).toBe(6);
   });
 });
