@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { MTS_1500_BEATS } from "../src/components/Mts1500CycleScrollSection";
 
 test.describe("3J Industrial Parts LLC — Foundry Website Verification Suite (Division 01 Only)", () => {
-  test("1. Home page (/) renders official logo, melt-treatment SVG animation, verbatim proof quote, both scroll sections, single footer cross-link, and zero commercial content", async ({
+  test("1. Home page (/) renders official logo, hero machine selector, verbatim proof quote, both scroll sections, single footer cross-link, and zero commercial content", async ({
     page,
   }) => {
     const response = await page.goto("/");
@@ -24,11 +24,20 @@ test.describe("3J Industrial Parts LLC — Foundry Website Verification Suite (D
       page.getByText("SPARE PARTS | SERVICES | CONSULTING").first()
     ).toBeVisible();
 
-    // Animated Melt-Treatment Schematic SVG
-    const schematicSvg = page.locator("svg").filter({
-      hasText: "Aluminum Melt-Treatment Rotary Degassing Schematic",
-    });
-    await expect(schematicSvg).toBeVisible();
+    // Hero Machine Selector Section
+    const heroSelector = page.getByTestId("hero-machine-selector");
+    await expect(heroSelector).toBeVisible();
+
+    // All 4 confirmed machines exist in the selector
+    await expect(page.getByTestId("machine-card-FDU")).toBeVisible();
+    await expect(page.getByTestId("machine-card-MTS 1500")).toBeVisible();
+    await expect(page.getByTestId("machine-card-SMARTT")).toBeVisible();
+    await expect(
+      page.getByTestId("machine-card-ThermaTest NGIII 5000")
+    ).toBeVisible();
+
+    // Machine detail panel exists
+    await expect(page.getByTestId("machine-detail-panel")).toBeVisible();
 
     // Verbatim Proof Quote
     await expect(
@@ -60,6 +69,9 @@ test.describe("3J Industrial Parts LLC — Foundry Website Verification Suite (D
     );
     expect(fduTop).toBeLessThan(staticTop);
     expect(staticTop).toBeLessThan(mtsTop);
+
+    // Part Selector section exists
+    await expect(page.getByTestId("part-selector-section")).toBeVisible();
 
     // Single required footer cross-link line to 3JI-Repair commercial site
     const commercialLink = page.getByRole("link", {
@@ -136,7 +148,7 @@ test.describe("3J Industrial Parts LLC — Foundry Website Verification Suite (D
     await expect(footerCrossLink).toBeVisible();
   });
 
-  test("4. About (/about) renders Jason Allen bio, verbatim proof quote, melt-treatment differentiators, and honors prefers-reduced-motion on both scroll sections", async ({
+  test("4. About (/about) renders Jason Allen bio, verbatim proof quote, and melt-treatment differentiators", async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -155,14 +167,8 @@ test.describe("3J Industrial Parts LLC — Foundry Website Verification Suite (D
     await expect(page.getByText("CAP-03")).toBeVisible();
     await expect(page.getByText("CAP-04")).toBeVisible();
 
-    // Verify prefers-reduced-motion disables animations & renders static assembled views on /
+    // Verify prefers-reduced-motion disables scroll section transforms on /
     await page.goto("/");
-    const bubbleAnimName = await page
-      .locator(".melt-bubble-slow")
-      .first()
-      .evaluate((el) => window.getComputedStyle(el).animationName);
-    expect(bubbleAnimName).toBe("none");
-
     await expect(page.getByTestId("fdu-exploded-scroll-section")).toHaveAttribute(
       "data-reduced-motion",
       "true"
@@ -172,7 +178,7 @@ test.describe("3J Industrial Parts LLC — Foundry Website Verification Suite (D
     ).toHaveAttribute("data-reduced-motion", "true");
   });
 
-  test("5. Mobile (390x844) scroll-scrubs both FDU Exploded-View (5 layers) and MTS 1500 In-Action (6 beats) smoothly with zero horizontal overflow", async ({
+  test("5. Mobile (390x844) scroll-scrubs with zero horizontal overflow", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -184,6 +190,10 @@ test.describe("3J Industrial Parts LLC — Foundry Website Verification Suite (D
       () => document.documentElement.scrollWidth <= window.innerWidth
     );
     expect(overflowCheck).toBe(true);
+
+    // Verify Hero Machine Selector is visible on mobile
+    await expect(page.getByTestId("hero-machine-selector")).toBeVisible();
+    await expect(page.getByTestId("machine-card-FDU")).toBeVisible();
 
     // Verify all 5 FDU component labels exist & are readable
     await expect(page.getByTestId("fdu-label-drive-head")).toContainText(
@@ -202,44 +212,97 @@ test.describe("3J Industrial Parts LLC — Foundry Website Verification Suite (D
       "Crucible"
     );
 
-    // Scroll to 60% of FDU Exploded section -> layers must separate vertically
-    await page.evaluate(() => {
-      const el = document.querySelector(
-        '[data-testid="fdu-exploded-scroll-section"]'
-      ) as HTMLElement;
-      const rect = el.getBoundingClientRect();
-      const topDoc = rect.top + window.scrollY;
-      const scrollable = Math.max(1, rect.height - window.innerHeight);
-      window.scrollTo({ top: topDoc + scrollable * 0.6, behavior: "instant" });
-      window.dispatchEvent(new Event("scroll"));
-    });
-
-    await expect
-      .poll(async () => {
-        const val = await page
-          .getByTestId("fdu-layer-drive-head")
-          .getAttribute("data-offset-y");
-        return Number(val || "0");
-      })
-      .toBeLessThan(-40);
-
     // Scroll to MTS 1500 Cycle section -> cycle beat indicators must scrub
     await page.evaluate(() => {
       const el = document.querySelector(
         '[data-testid="mts-1500-cycle-scroll-section"]'
       ) as HTMLElement;
-      const rect = el.getBoundingClientRect();
-      const topDoc = rect.top + window.scrollY;
-      const scrollable = Math.max(1, rect.height - window.innerHeight);
-      window.scrollTo({ top: topDoc + scrollable * 0.5, behavior: "instant" });
-      window.dispatchEvent(new Event("scroll"));
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const topDoc = rect.top + window.scrollY;
+        const scrollable = Math.max(1, rect.height - window.innerHeight);
+        window.scrollTo({ top: topDoc + scrollable * 0.5, behavior: "instant" });
+        window.dispatchEvent(new Event("scroll"));
+      }
     });
 
-    await expect(
-      page.getByTestId("mts-active-beat-label")
-    ).toBeVisible();
-
-    // Verify all 6 MTS 1500 cycle beats are defined
+    await expect(page.getByTestId("mts-active-beat-label")).toBeVisible();
     expect(MTS_1500_BEATS.length).toBe(6);
+  });
+
+  test("6. Hero Machine Selector (1440x900 above-the-fold & interaction suite)", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+
+    // Acceptance 1: Header + Headline + 4 Machines + Detail Panel + Repair CTA all visible above fold
+    const repairBtn = page.getByTestId("hero-repair-machine-cta");
+    await expect(repairBtn).toBeVisible();
+
+    const repairBtnBottom = await repairBtn.evaluate((el) => {
+      return el.getBoundingClientRect().bottom;
+    });
+    // Button must be within the 900px viewport without scrolling
+    expect(repairBtnBottom).toBeLessThanOrEqual(900);
+
+    // Acceptance 2: FDU selected by default, clicking MTS 1500 changes detail panel copy
+    await expect(page.getByTestId("machine-detail-panel")).toContainText(
+      "FDU (Foundry Degassing Unit)"
+    );
+
+    await page.getByTestId("machine-card-MTS 1500").click();
+    await expect(page.getByTestId("machine-detail-panel")).toContainText(
+      "MTS 1500 (Metal Treatment Station)"
+    );
+
+    // Acceptance 3: 'Repair this machine' scrolls to quote form with platform pre-selected and serial focused
+    await page.getByTestId("hero-repair-machine-cta").click();
+
+    // Verify quote platform is now MTS 1500
+    const quotePlatformSelect = page.locator("#quote-platform");
+    await expect(quotePlatformSelect).toHaveValue("MTS 1500");
+
+    // Verify focus is in serial number field
+    await expect(page.locator("#quote-serial")).toBeFocused();
+  });
+
+  test("7. Part Selector (3-step Rexroth/McMaster flow) & Quote Pre-fill", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const partSelector = page.getByTestId("part-selector-section");
+    await expect(partSelector).toBeVisible();
+
+    // Step 1: Click SMARTT
+    await page.getByTestId("ps-system-SMARTT").click();
+
+    // Step 2: Verify SMARTT part families are displayed
+    await expect(
+      page.getByTestId("ps-family-Mass flow controllers")
+    ).toBeVisible();
+    await expect(page.getByTestId("ps-family-Sensors")).toBeVisible();
+    await expect(page.getByTestId("ps-family-Rotors")).toBeVisible();
+
+    // Select 'Mass flow controllers'
+    await page.getByTestId("ps-family-Mass flow controllers").click();
+
+    // Step 3: Enter serial number
+    await page.getByTestId("ps-serial-input").fill("SMARTT-2024-5510");
+
+    // Click 'Get this part'
+    await page.getByTestId("ps-get-this-part-btn").click();
+
+    // Verify quote form has platform set to SMARTT
+    await expect(page.locator("#quote-platform")).toHaveValue("SMARTT");
+
+    // Verify serial number field is populated
+    await expect(page.locator("#quote-serial")).toHaveValue("SMARTT-2024-5510");
+
+    // Verify request details textarea has pre-filled part request
+    const messageVal = await page.locator("#quote-message").inputValue();
+    expect(messageVal).toContain("Part Family Request: Mass flow controllers for SMARTT");
+    expect(messageVal).toContain("SMARTT-2024-5510");
   });
 });

@@ -30,6 +30,29 @@ export default function QuoteRequestForm({
   const [submitting, setSubmitting] = useState(false);
   const [submittedRef, setSubmittedRef] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    if (defaultPlatform) setPlatform(defaultPlatform);
+  }, [defaultPlatform]);
+
+  React.useEffect(() => {
+    if (defaultSerial !== undefined) setSerialNumber(defaultSerial);
+  }, [defaultSerial]);
+
+  React.useEffect(() => {
+    if (defaultMessage !== undefined) setMessage(defaultMessage);
+  }, [defaultMessage]);
+
+  React.useEffect(() => {
+    const handlePrefill = (e: Event) => {
+      const customEvent = e as CustomEvent<{ platform?: string; serial?: string; message?: string }>;
+      if (customEvent.detail?.platform) setPlatform(customEvent.detail.platform);
+      if (customEvent.detail?.serial !== undefined) setSerialNumber(customEvent.detail.serial);
+      if (customEvent.detail?.message !== undefined) setMessage(customEvent.detail.message);
+    };
+    window.addEventListener("3j:prefill-quote", handlePrefill);
+    return () => window.removeEventListener("3j:prefill-quote", handlePrefill);
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
