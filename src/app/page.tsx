@@ -1,10 +1,13 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
-import MeltTreatmentSchematic from "@/components/MeltTreatmentSchematic";
+import HeroMachineSelector from "@/components/HeroMachineSelector";
+import PartSelectorSection from "@/components/PartSelectorSection";
 import FduExplodedScrollSection from "@/components/FduExplodedScrollSection";
 import Mts1500CycleScrollSection from "@/components/Mts1500CycleScrollSection";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
-import { BRAND, PLATFORMS } from "@/data/catalog";
+import { BRAND, PLATFORMS, PlatformId } from "@/data/catalog";
 
 const SIX_CORE_SERVICES = [
   {
@@ -52,83 +55,58 @@ const SIX_CORE_SERVICES = [
 ];
 
 export default function HomePage() {
+  const [partSystem, setPartSystem] = useState<PlatformId>("FDU");
+  const [quotePlatform, setQuotePlatform] = useState<string>("FDU");
+  const [quoteSerial, setQuoteSerial] = useState<string>("");
+  const [quoteMessage, setQuoteMessage] = useState<string>("");
+
+  const handleRepairMachine = (platformId: string) => {
+    setQuotePlatform(platformId);
+    const target = document.getElementById("quote-request");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+    setTimeout(() => {
+      const serialField = document.getElementById("quote-serial");
+      if (serialField) serialField.focus();
+    }, 400);
+  };
+
+  const handleBrowseParts = (platformId: string) => {
+    setPartSystem(platformId as PlatformId);
+    const target = document.getElementById("part-selector");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleGetPart = (system: string, family: string, serial: string) => {
+    setQuotePlatform(system);
+    if (serial) setQuoteSerial(serial);
+    setQuoteMessage(
+      `Part Family Request: ${family} for ${system}${
+        serial ? ` (Unit Serial: ${serial})` : ""
+      }`
+    );
+    const target = document.getElementById("quote-request");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+    setTimeout(() => {
+      const msgField = document.getElementById("quote-message");
+      if (msgField) msgField.focus();
+    }, 400);
+  };
+
   return (
-    <div className="bg-[#000000] text-white">
-      {/* SECTION 1.1: HERO + CSS/SVG ANIMATED MELT-TREATMENT HEADER */}
-      <section className="relative border-b border-[#262626] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            {/* Hero Copy Column */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded bg-[#0A0A0A] border border-[#5ADCC8]/40">
-                <span className="h-2 w-2 rounded-full bg-[#5ADCC8]" />
-                <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#5ADCC8]">
-                  {BRAND.tagline}
-                </span>
-              </div>
+    <div className="bg-[#000000] text-white overflow-x-hidden">
+      {/* SECTION 1.1: NEW ABOVE-THE-FOLD MACHINE SELECTOR HERO (SUPERSEDES SCHEMATIC) */}
+      <HeroMachineSelector
+        onRepairMachine={handleRepairMachine}
+        onBrowseParts={handleBrowseParts}
+      />
 
-              <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-extrabold uppercase tracking-tight leading-[1.08] text-white">
-                Precision Parts &amp; Field Service That Keep Production Running.
-              </h1>
-
-              <p className="text-base sm:text-lg text-[#CCCCCC] leading-relaxed">
-                <strong className="text-white">Division 01 (Nationwide U.S.):</strong>{" "}
-                Serial-verified spare parts, field repair, equipment health checks, and process consulting for{" "}
-                <span className="text-[#5ADCC8] font-semibold">
-                  FDU, MTS 1500, SMARTT, and ThermaTest NGIII 5000
-                </span>{" "}
-                aluminum melt-treatment platforms. Every part is matched to your unit&apos;s serial number before it ships, with detailed estimates delivered within 24 hours.
-              </p>
-
-              {/* Dual Hero CTAs */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
-                <Link
-                  href="/parts-finder"
-                  className="inline-flex items-center justify-center px-6 py-4 rounded bg-[#5ADCC8] hover:bg-[#4bcbb7] text-[#000000] font-extrabold text-sm uppercase tracking-wider transition-colors"
-                >
-                  Find Parts &amp; Request Quote →
-                </Link>
-                <Link
-                  href="#quote-request"
-                  className="inline-flex items-center justify-center px-6 py-4 rounded bg-[#0A0A0A] hover:bg-[#1A1A1A] text-white border border-[#5ADCC8]/50 font-bold text-sm uppercase tracking-wider transition-colors"
-                >
-                  Request 24-Hour Estimate →
-                </Link>
-              </div>
-
-              {/* Quick Trust Strip */}
-              <div className="pt-4 border-t border-[#1A1A1A] flex flex-wrap items-center gap-6 text-xs font-mono text-[#CCCCCC]">
-                <div>
-                  <span className="text-[#999999] block uppercase">QUOTE PROMISE</span>
-                  <strong className="text-[#5ADCC8] uppercase">
-                    Estimate Within 24 Hours
-                  </strong>
-                </div>
-                <div>
-                  <span className="text-[#999999] block uppercase">DIRECT LINE</span>
-                  <a
-                    href={BRAND.phoneHref}
-                    className="text-white font-bold hover:text-[#5ADCC8]"
-                  >
-                    {BRAND.phoneDisplay}
-                  </a>
-                </div>
-                <div>
-                  <span className="text-[#999999] block uppercase">PART FIT</span>
-                  <strong className="text-white">100% Serial-Number Verified</strong>
-                </div>
-              </div>
-            </div>
-
-            {/* Hero Animated Melt-Treatment Schematic Column */}
-            <div className="lg:col-span-6">
-              <MeltTreatmentSchematic />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 1.2: PROOF & CREDIBILITY STRIP */}
+      {/* SECTION 1.2: PROOF & CREDIBILITY STRIP (KEPT UNCHANGED) */}
       <section className="bg-[#0A0A0A] border-b border-[#262626]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -178,10 +156,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* PIECE 1: EXPLODED-VIEW FDU ROTARY DEGASSER SCROLL ANIMATION */}
+      {/* PIECE 1: EXPLODED-VIEW FDU ROTARY DEGASSER SCROLL ANIMATION (KEPT UNCHANGED) */}
       <FduExplodedScrollSection />
 
-      {/* SECTION 1.3: TWO-DIVISION SPLIT (CARD GRID) */}
+      {/* SECTION 1.3: TWO-DIVISION SPLIT / WHAT WE SUPPORT (KEPT UNCHANGED) */}
       <section
         data-testid="static-what-we-support-section"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
@@ -196,7 +174,6 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 gap-8">
-          {/* Card A: Division 01 (Full Width) */}
           <div className="rounded-xl bg-[#0A0A0A] border-2 border-[#5ADCC8]/60 p-6 sm:p-10 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -271,7 +248,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SECTION 1.4: FEATURED PLATFORMS STRIP + SIX CORE SERVICES */}
+      {/* SECTION 1.4: FEATURED PLATFORMS STRIP + SIX CORE SERVICES (KEPT UNCHANGED) */}
       <section className="bg-[#050505] border-y border-[#262626] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
           {/* Featured Platforms Strip */}
@@ -359,12 +336,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* PIECE 2: MTS 1500 IN-ACTION SCROLL-SCRUBBED TREATMENT CYCLE */}
+      {/* PIECE 2: MTS 1500 IN-ACTION SCROLL-SCRUBBED TREATMENT CYCLE (KEPT UNCHANGED) */}
       <Mts1500CycleScrollSection />
+
+      {/* NEW SECTION: 3-STEP PART SELECTOR (BEFORE QUOTE FORM) */}
+      <PartSelectorSection
+        initialSystem={partSystem}
+        onGetPart={handleGetPart}
+      />
 
       {/* SECTION 1.6: UNIFIED QUOTE / SERVICE REQUEST SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <QuoteRequestForm />
+        <QuoteRequestForm
+          defaultPlatform={quotePlatform}
+          defaultSerial={quoteSerial}
+          defaultMessage={quoteMessage}
+        />
       </section>
     </div>
   );
